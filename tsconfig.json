@@ -18,8 +18,13 @@
         "name": "next"
       }
     ],
+    /* Path Aliases */
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "*": ["./*"],
+      "app/*": ["app/*"],
+      "modules/*": ["modules/*"],
+      "shared/*": ["shared/*"]
     }
   },
   "include": [
