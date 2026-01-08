@@ -1,11 +1,11 @@
+import { CharacteristicsEnum } from "shared/types";
 import attackSprite from "./assets/sprites/worm/attack.png";
 import deathSprite from "./assets/sprites/worm/death.png";
 import getHitSprite from "./assets/sprites/worm/get-hit.png";
 import idleSprite from "./assets/sprites/worm/idle.png";
-import { CharacteristicsEnum } from "shared/types";
+import type { MonsterAnimationConfig } from "../shared/MonsterAnimation.types";
 import { createRandomCharacteristics } from "../shared/MonsterStats";
 import type { MonsterStatRanges } from "../shared/MonsterStats";
-import type { MonsterAnimationConfig } from "../shared/MonsterAnimation.types";
 
 const FRAME_SIZE = 180;
 const FRAME_DURATION_MS = 100;
@@ -46,30 +46,30 @@ export const FIRE_WORM_LEVEL = 10;
 
 const FIRE_WORM_STAT_RANGES: MonsterStatRanges = {
   base: {
-    [CharacteristicsEnum.HP]: [200, 320],
-    [CharacteristicsEnum.MP]: [40, 90],
-    [CharacteristicsEnum.PHYS_RESIST]: [22, 48],
-    [CharacteristicsEnum.MAGIC_RESIST]: [10, 24],
-    [CharacteristicsEnum.PHYS_ATK]: [50, 90],
-    [CharacteristicsEnum.MAGIC_ATK]: [18, 35],
-    [CharacteristicsEnum.CRIT_CHANCE]: [5, 12],
-    [CharacteristicsEnum.CRIT_DAMAGE]: [130, 180],
-    [CharacteristicsEnum.ACCURACY]: [50, 82],
-    [CharacteristicsEnum.EVASION]: [8, 20],
-    [CharacteristicsEnum.VAMPIRIC]: [2, 9],
+    [CharacteristicsEnum.HP]: [450, 450],
+    [CharacteristicsEnum.MP]: [25, 25],
+    [CharacteristicsEnum.PHYS_RESIST]: [30, 30],
+    [CharacteristicsEnum.MAGIC_RESIST]: [20, 20],
+    [CharacteristicsEnum.PHYS_ATK]: [50, 50],
+    [CharacteristicsEnum.MAGIC_ATK]: [50, 50],
+    [CharacteristicsEnum.CRIT_CHANCE]: [15, 15],
+    [CharacteristicsEnum.CRIT_DAMAGE]: [50, 50],
+    [CharacteristicsEnum.ACCURACY]: [50, 50],
+    [CharacteristicsEnum.EVASION]: [15, 15],
+    [CharacteristicsEnum.VAMPIRIC]: [3, 3],
   },
   growth: {
-    [CharacteristicsEnum.HP]: [12, 20],
-    [CharacteristicsEnum.MP]: [3, 6],
-    [CharacteristicsEnum.PHYS_RESIST]: [2, 5],
-    [CharacteristicsEnum.MAGIC_RESIST]: [1, 3],
-    [CharacteristicsEnum.PHYS_ATK]: [4, 8],
-    [CharacteristicsEnum.MAGIC_ATK]: [1, 3],
-    [CharacteristicsEnum.CRIT_CHANCE]: [1, 2],
-    [CharacteristicsEnum.CRIT_DAMAGE]: [3, 6],
-    [CharacteristicsEnum.ACCURACY]: [2, 5],
-    [CharacteristicsEnum.EVASION]: [1, 3],
-    [CharacteristicsEnum.VAMPIRIC]: [1, 2],
+    [CharacteristicsEnum.HP]: [50, 50],
+    [CharacteristicsEnum.MP]: [10, 10],
+    [CharacteristicsEnum.PHYS_RESIST]: [10, 10],
+    [CharacteristicsEnum.MAGIC_RESIST]: [10, 10],
+    [CharacteristicsEnum.PHYS_ATK]: [10, 10],
+    [CharacteristicsEnum.MAGIC_ATK]: [5, 5],
+    [CharacteristicsEnum.CRIT_CHANCE]: [5, 1],
+    [CharacteristicsEnum.CRIT_DAMAGE]: [10, 10],
+    [CharacteristicsEnum.ACCURACY]: [5, 5],
+    [CharacteristicsEnum.EVASION]: [5, 5],
+    [CharacteristicsEnum.VAMPIRIC]: [2, 2],
   },
 };
 

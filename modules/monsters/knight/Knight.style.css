@@ -1,0 +1,35 @@
+@keyframes knight-idle {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: -1200px 0;
+    }
+}
+
+@keyframes knight-attack {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: -1200px 0;
+    }
+}
+
+@keyframes knight-death {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: -800px 0;
+    }
+}
+
+@keyframes knight-getHit {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: -800px 0;
+    }
+}
