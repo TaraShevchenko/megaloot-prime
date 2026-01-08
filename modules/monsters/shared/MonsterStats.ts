@@ -51,7 +51,7 @@ const createSeededRandom = (seed: number) => {
 };
 
 const randomInt = (rand: () => number, min: number, max: number) =>
-  Math.floor(rand() * (max - min + 1)) + min;
+  Math.floor(rand() * (max - min)) + min;
 
 export const createRandomCharacteristics = (
   seed: number,
