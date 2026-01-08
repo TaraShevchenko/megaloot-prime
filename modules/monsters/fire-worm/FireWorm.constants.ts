@@ -1,11 +1,11 @@
+import { CharacteristicsEnum } from "shared/types";
 import attackSprite from "./assets/sprites/worm/attack.png";
 import deathSprite from "./assets/sprites/worm/death.png";
 import getHitSprite from "./assets/sprites/worm/get-hit.png";
 import idleSprite from "./assets/sprites/worm/idle.png";
-import { CharacteristicsEnum } from "shared/types";
+import type { MonsterAnimationConfig } from "../shared/MonsterAnimation.types";
 import { createRandomCharacteristics } from "../shared/MonsterStats";
 import type { MonsterStatRanges } from "../shared/MonsterStats";
-import type { MonsterAnimationConfig } from "../shared/MonsterAnimation.types";
 
 const FRAME_SIZE = 180;
 const FRAME_DURATION_MS = 100;
@@ -46,7 +46,7 @@ export const FIRE_WORM_LEVEL = 10;
 
 const FIRE_WORM_STAT_RANGES: MonsterStatRanges = {
   base: {
-    [CharacteristicsEnum.HP]: [200, 320],
+    [CharacteristicsEnum.HP]: [200, 3230],
     [CharacteristicsEnum.MP]: [40, 90],
     [CharacteristicsEnum.PHYS_RESIST]: [22, 48],
     [CharacteristicsEnum.MAGIC_RESIST]: [10, 24],
