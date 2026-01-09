@@ -12,12 +12,40 @@ export enum CharacteristicsEnum {
   VAMPIRIC = "VAMPIRIC",
 }
 
+export const CHARACTERISTICS_ORDER: CharacteristicsEnum[] = [
+  CharacteristicsEnum.HP,
+  CharacteristicsEnum.MP,
+  CharacteristicsEnum.PHYS_RESIST,
+  CharacteristicsEnum.MAGIC_RESIST,
+  CharacteristicsEnum.PHYS_ATK,
+  CharacteristicsEnum.MAGIC_ATK,
+  CharacteristicsEnum.CRIT_CHANCE,
+  CharacteristicsEnum.CRIT_DAMAGE,
+  CharacteristicsEnum.ACCURACY,
+  CharacteristicsEnum.EVASION,
+  CharacteristicsEnum.VAMPIRIC,
+];
+
+export const CHARACTERISTIC_LABELS: Record<CharacteristicsEnum, string> = {
+  [CharacteristicsEnum.HP]: "HP",
+  [CharacteristicsEnum.MP]: "MP",
+  [CharacteristicsEnum.PHYS_RESIST]: "Phys DEF",
+  [CharacteristicsEnum.MAGIC_RESIST]: "Magic DEF",
+  [CharacteristicsEnum.PHYS_ATK]: "Phys ATK",
+  [CharacteristicsEnum.MAGIC_ATK]: "Magic ATK",
+  [CharacteristicsEnum.CRIT_CHANCE]: "Crit %",
+  [CharacteristicsEnum.CRIT_DAMAGE]: "Crit Dmg",
+  [CharacteristicsEnum.ACCURACY]: "Accuracy",
+  [CharacteristicsEnum.EVASION]: "Evasion",
+  [CharacteristicsEnum.VAMPIRIC]: "Vampiric",
+};
+
 export enum RarityEnum {
-  COMMON = "COMMON", // BG: #D9D9D9 -> #737373 (134deg)
-  UNCOMMON = "UNCOMMON", // BG: #32E26C -> #A4F8C0 (134deg)
-  RARE = "RARE", // BG: #5C6FE8 -> #BBADE6 (134deg)
-  EPIC = "EPIC", // BG: #FFD900 -> #9650F8 (134deg)
-  LEGENDARY = "LEGENDARY", // BG: #3BE8C5 -> #003C30 (134deg)
+  COMMON = "COMMON",
+  UNCOMMON = "UNCOMMON",
+  RARE = "RARE",
+  EPIC = "EPIC",
+  LEGENDARY = "LEGENDARY",
 }
 
 export const RARITY_BACKGROUNDS: Record<RarityEnum, string> = {

@@ -1,0 +1,29 @@
+# Shared-компоненты монстров
+
+Ключевые точки по файлам из `modules/monsters/shared`.
+
+## MonsterAnimation.hook.tsx
+- Фабрика `createMonsterAnimation` привязывает конфиг анимаций к компоненту и хуку.
+- `MonsterAnimation` прокидывает `config` и `useStore` в UI-слой.
+- `useMonsterAnimation` дает `Monster` и методы `playAttack`, `playDeath`, `playGetHit`.
+
+## MonsterAnimation.store.ts
+- Zustand-стор хранит `animation`, очередь `queued` и `playId`.
+- `request` ставит анимацию в очередь.
+- `startQueued` запускает очередь только когда текущая анимация `idle`.
+- `finish` возвращает состояние в `idle` и обновляет `playId`.
+
+## MonsterAnimation.types.ts
+- Типы для имен анимаций, описаний спрайтов и конфига.
+- `MonsterAnimationProps` описывает только `className` и `title`.
+- `MonsterAnimationState` задает контракт стора.
+
+## MonsterAnimation.ui.tsx
+- Рендерит спрайт и динамически генерирует keyframes для всех анимаций.
+- В `idle` анимация зациклена и может принять очередь.
+- В не-`idle` анимации проигрываются один раз и фиксируют последний кадр.
+- `playId` принудительно сбрасывает CSS-анимацию при смене состояния.
+
+## MonsterStats.ts
+- Задает порядок характеристик и их подписи.
+- `getScaledCharacteristics` масштабирует базу по уровню и росту.
