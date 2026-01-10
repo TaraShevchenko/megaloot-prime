@@ -49,7 +49,7 @@ export function EquipmentCard({
             style={{ backgroundImage: RARITY_BACKGROUNDS[rarity] }}
           >
             <Image
-              src={equipment.image}
+              src={equipment.skins[rarity]}
               alt={equipment.name}
               className="h-24 w-24 object-contain drop-shadow-[0_16px_28px_rgba(0,0,0,0.45)]"
             />
