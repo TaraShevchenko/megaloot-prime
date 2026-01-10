@@ -1,6 +1,6 @@
 "use client";
 
-import type { MonsterCharacteristics } from "shared/types";
+import type { Characteristics } from "shared/characteristics";
 import { useMonsterAnimation as useEvilWitchAnimation } from "./evil-witch";
 import {
   ANIMATION_CONFIG as EVIL_WITCH_ANIMATION_CONFIG,
@@ -32,7 +32,7 @@ export enum MonsterId {
 export type MonsterEntry = {
   id: MonsterId;
   name: string;
-  characteristics: MonsterCharacteristics;
+  characteristics: Characteristics;
   frameSize: number;
 };
 

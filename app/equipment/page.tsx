@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "shared/utils/cn";
-import type { RarityEnum } from "shared/types";
+import type { RarityEnum } from "shared/rarity";
 import { EquipmentCard } from "./components/EquipmentCard";
 import { EQUIPMENT_ITEMS, type EquipmentId } from "./equipment.data";
 

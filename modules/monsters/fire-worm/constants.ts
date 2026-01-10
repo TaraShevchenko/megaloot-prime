@@ -1,4 +1,7 @@
-import { CharacteristicsEnum, type MonsterCharacteristics } from "shared/types";
+import {
+  CharacteristicsEnum,
+  type Characteristics,
+} from "shared/characteristics";
 import attackSprite from "./assets/attack.png";
 import deathSprite from "./assets/death.png";
 import getHitSprite from "./assets/get-hit.png";
@@ -38,31 +41,25 @@ export const ANIMATION_CONFIG: MonsterAnimationConfig = {
   },
 };
 
-export const CHARACTERISTICS: MonsterCharacteristics = {
+export const CHARACTERISTICS: Characteristics = {
   base: {
     [CharacteristicsEnum.HP]: 450,
-    [CharacteristicsEnum.MP]: 25,
-    [CharacteristicsEnum.PHYS_RESIST]: 30,
-    [CharacteristicsEnum.MAGIC_RESIST]: 20,
+    [CharacteristicsEnum.PHYS_DEF]: 30,
+    [CharacteristicsEnum.MAGIC_DEF]: 20,
     [CharacteristicsEnum.PHYS_ATK]: 50,
     [CharacteristicsEnum.MAGIC_ATK]: 50,
     [CharacteristicsEnum.CRIT_CHANCE]: 15,
     [CharacteristicsEnum.CRIT_DAMAGE]: 50,
-    [CharacteristicsEnum.ACCURACY]: 50,
-    [CharacteristicsEnum.EVASION]: 15,
     [CharacteristicsEnum.VAMPIRIC]: 3,
   },
   growth: {
     [CharacteristicsEnum.HP]: 50,
-    [CharacteristicsEnum.MP]: 10,
-    [CharacteristicsEnum.PHYS_RESIST]: 10,
-    [CharacteristicsEnum.MAGIC_RESIST]: 10,
+    [CharacteristicsEnum.PHYS_DEF]: 10,
+    [CharacteristicsEnum.MAGIC_DEF]: 10,
     [CharacteristicsEnum.PHYS_ATK]: 10,
     [CharacteristicsEnum.MAGIC_ATK]: 5,
     [CharacteristicsEnum.CRIT_CHANCE]: 2,
     [CharacteristicsEnum.CRIT_DAMAGE]: 10,
-    [CharacteristicsEnum.ACCURACY]: 5,
-    [CharacteristicsEnum.EVASION]: 5,
     [CharacteristicsEnum.VAMPIRIC]: 2,
   },
 };

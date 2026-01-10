@@ -1,11 +1,8 @@
 import {
   CHARACTERISTIC_LABELS,
   CHARACTERISTICS_ORDER,
-} from "modules/monsters/shared/MonsterStats";
-import {
-  RARITY_LABELS,
-  type RarityEnum,
-} from "shared/types";
+} from "shared/characteristics";
+import { RARITY_LABELS, type RarityEnum } from "shared/rarity";
 import type { EquipmentEntry } from "../equipment.data";
 
 type EquipmentStatsBlockProps = {

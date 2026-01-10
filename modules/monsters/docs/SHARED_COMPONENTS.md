@@ -1,6 +1,6 @@
 # Shared-компоненты монстров
 
-Ключевые точки по файлам из `modules/monsters/shared`.
+Ключевые точки по файлам из `modules/monsters/shared` и `shared/characteristics.ts`.
 
 ## MonsterAnimation.hook.tsx
 - Фабрика `createMonsterAnimation` привязывает конфиг анимаций к компоненту и хуку.
@@ -24,6 +24,7 @@
 - В не-`idle` анимации проигрываются один раз и фиксируют последний кадр.
 - `playId` принудительно сбрасывает CSS-анимацию при смене состояния.
 
-## MonsterStats.ts
+## shared/characteristics.ts
 - Задает порядок характеристик и их подписи.
 - `getScaledCharacteristics` масштабирует базу по уровню и росту.
+- Содержит zod-схемы и типы для характеристик.

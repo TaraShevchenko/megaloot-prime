@@ -11,7 +11,10 @@
 Создайте `modules/monsters/<monster-id>/constants.ts`:
 
 ```ts
-import { CharacteristicsEnum, type MonsterCharacteristics } from "shared/types";
+import {
+  CharacteristicsEnum,
+  type Characteristics,
+} from "shared/characteristics";
 import idleSprite from "./assets/idle.png";
 import attackSprite from "./assets/attack.png";
 import getHitSprite from "./assets/get-hit.png";
@@ -52,31 +55,25 @@ export const ANIMATION_CONFIG: MonsterAnimationConfig = {
   defaultTitle: "Ice Golem",
 };
 
-export const CHARACTERISTICS: MonsterCharacteristics = {
+export const CHARACTERISTICS: Characteristics = {
   base: {
     [CharacteristicsEnum.HP]: 200,
-    [CharacteristicsEnum.MP]: 50,
-    [CharacteristicsEnum.PHYS_RESIST]: 20,
-    [CharacteristicsEnum.MAGIC_RESIST]: 10,
+    [CharacteristicsEnum.PHYS_DEF]: 20,
+    [CharacteristicsEnum.MAGIC_DEF]: 10,
     [CharacteristicsEnum.PHYS_ATK]: 25,
     [CharacteristicsEnum.MAGIC_ATK]: 5,
     [CharacteristicsEnum.CRIT_CHANCE]: 5,
     [CharacteristicsEnum.CRIT_DAMAGE]: 25,
-    [CharacteristicsEnum.ACCURACY]: 30,
-    [CharacteristicsEnum.EVASION]: 10,
     [CharacteristicsEnum.VAMPIRIC]: 0,
   },
   growth: {
     [CharacteristicsEnum.HP]: 30,
-    [CharacteristicsEnum.MP]: 8,
-    [CharacteristicsEnum.PHYS_RESIST]: 2,
-    [CharacteristicsEnum.MAGIC_RESIST]: 1,
+    [CharacteristicsEnum.PHYS_DEF]: 2,
+    [CharacteristicsEnum.MAGIC_DEF]: 1,
     [CharacteristicsEnum.PHYS_ATK]: 3,
     [CharacteristicsEnum.MAGIC_ATK]: 1,
     [CharacteristicsEnum.CRIT_CHANCE]: 1,
     [CharacteristicsEnum.CRIT_DAMAGE]: 3,
-    [CharacteristicsEnum.ACCURACY]: 2,
-    [CharacteristicsEnum.EVASION]: 1,
     [CharacteristicsEnum.VAMPIRIC]: 0,
   },
 };
