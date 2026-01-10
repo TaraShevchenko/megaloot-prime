@@ -1,8 +1,10 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import { useEffect, useMemo } from "react";
 import { type MonsterEntry } from "modules/monsters";
-import { useMonsterAnimation } from "modules/monsters/client";
+import { useMonsterAnimation, useMonsterLifecycle } from "modules/monsters/client";
+import { CharacteristicsEnum, getScaledCharacteristics } from "shared/characteristics";
 import { cn } from "shared/utils/cn";
 import { ActionButton } from "./ActionButton";
 import { StatsBlock } from "./StatsBlock";
@@ -28,6 +30,43 @@ export function MonsterRow({
   const safeLevel = Number.isFinite(level) ? level : 1;
   const scale = (MONSTER_DISPLAY_SIZE / monster.frameSize).toFixed(3);
   const scaleStyle = { "--monster-scale": scale } as CSSProperties;
+  const scaledStats = useMemo(
+    () => getScaledCharacteristics(monster.characteristics, safeLevel),
+    [monster.characteristics, safeLevel],
+  );
+  const maxHpValue = scaledStats[CharacteristicsEnum.HP];
+  const maxHp = Array.isArray(maxHpValue)
+    ? Math.max(...maxHpValue)
+    : maxHpValue;
+
+  const lifecycle = useMonsterLifecycle({
+    monsterId: monster.id,
+    level: safeLevel,
+    maxHp,
+  });
+  const { hp, maxHp: currentMaxHp, isDead, restoreFull, takeDamagePercent } =
+    lifecycle;
+
+  useEffect(() => {
+    if (!isDead) {
+      return;
+    }
+
+    playDeath();
+    const timeout = window.setTimeout(() => {
+      restoreFull();
+    }, monster.deathDurationMs);
+
+    return () => window.clearTimeout(timeout);
+  }, [isDead, monster.deathDurationMs, playDeath, restoreFull]);
+
+  const handleHit = () => {
+    if (isDead) {
+      return;
+    }
+    playGetHit();
+    takeDamagePercent(50);
+  };
 
   return (
     <div
@@ -62,6 +101,7 @@ export function MonsterRow({
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
+            <ActionButton tone="hit" label="Hit monster" onClick={handleHit} />
             <ActionButton tone="attack" label="Attack" onClick={playAttack} />
             <ActionButton tone="hit" label="Get Hit" onClick={playGetHit} />
             <ActionButton tone="death" label="Death" onClick={playDeath} />
@@ -104,6 +144,33 @@ export function MonsterRow({
           level={safeLevel}
           characteristics={monster.characteristics}
         />
+      </div>
+
+      <div className="mt-4 flex items-center gap-3">
+        <div className="min-w-[60px] text-xs uppercase tracking-[0.2em] text-slate-400">
+          HP
+        </div>
+        <div className="flex w-full flex-col gap-1">
+          <div className="flex items-center justify-between text-xs text-slate-200">
+            <span>
+              {Math.round(hp)} / {Math.round(currentMaxHp)}
+            </span>
+            {isDead && (
+              <span className="text-rose-200">Reviving...</span>
+            )}
+          </div>
+          <div className="h-2 w-full rounded-full bg-slate-800">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-amber-300 to-rose-300 transition-[width] duration-300"
+              style={{
+                width: `${Math.min(
+                  100,
+                  Math.max(0, (hp / Math.max(1, currentMaxHp)) * 100),
+                )}%`,
+              }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

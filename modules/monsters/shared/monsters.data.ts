@@ -30,23 +30,27 @@ export const MONSTERS: MonsterEntry[] = [
     name: formatMonsterName("EVIL_WITCH"),
     characteristics: EVIL_WITCH_CHARACTERISTICS,
     frameSize: EVIL_WITCH_ANIMATION_CONFIG.frameSize,
+    deathDurationMs: EVIL_WITCH_ANIMATION_CONFIG.animations.death.durationMs,
   },
   {
     id: "FIRE_WORM",
     name: formatMonsterName("FIRE_WORM"),
     characteristics: FIRE_WORM_CHARACTERISTICS,
     frameSize: FIRE_WORM_ANIMATION_CONFIG.frameSize,
+    deathDurationMs: FIRE_WORM_ANIMATION_CONFIG.animations.death.durationMs,
   },
   {
     id: "KNIGHT",
     name: formatMonsterName("KNIGHT"),
     characteristics: KNIGHT_CHARACTERISTICS,
     frameSize: KNIGHT_ANIMATION_CONFIG.frameSize,
+    deathDurationMs: KNIGHT_ANIMATION_CONFIG.animations.death.durationMs,
   },
   {
     id: "ORK",
     name: formatMonsterName("ORK"),
     characteristics: ORK_CHARACTERISTICS,
     frameSize: ORK_ANIMATION_CONFIG.frameSize,
+    deathDurationMs: ORK_ANIMATION_CONFIG.animations.death.durationMs,
   },
 ];
