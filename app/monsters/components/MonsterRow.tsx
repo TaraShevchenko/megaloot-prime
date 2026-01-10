@@ -1,9 +1,8 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { useMonsterAnimation } from "modules/monsters/useMonsterAnimation";
+import { useMonsterAnimation, type MonsterEntry } from "modules/monsters";
 import { cn } from "shared/utils/cn";
-import type { MonsterEntry } from "../monsters.data";
 import { ActionButton } from "./ActionButton";
 import { StatsBlock } from "./StatsBlock";
 

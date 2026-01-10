@@ -3,13 +3,14 @@
 import {
   CHARACTERISTIC_LABELS,
   CHARACTERISTICS_ORDER,
+  formatCharacteristicValue,
   getScaledCharacteristics,
-} from "modules/monsters/shared/MonsterStats";
-import type { MonsterCharacteristics } from "shared/types";
+} from "shared/characteristics";
+import type { Characteristics } from "shared/characteristics";
 
 type StatsBlockProps = {
   level: number;
-  characteristics: MonsterCharacteristics;
+  characteristics: Characteristics;
 };
 
 export function StatsBlock({ level, characteristics }: StatsBlockProps) {
@@ -40,6 +41,8 @@ export function StatsBlock({ level, characteristics }: StatsBlockProps) {
           const base = characteristics.base[stat];
           const growth = characteristics.growth[stat];
           const total = scaled[stat];
+          const baseLabel = formatCharacteristicValue(base);
+          const growthLabel = formatCharacteristicValue(growth);
 
           return (
             <div key={stat} className="contents">
@@ -47,8 +50,8 @@ export function StatsBlock({ level, characteristics }: StatsBlockProps) {
                 {CHARACTERISTIC_LABELS[stat]}
               </span>
               <span className="font-mono text-base text-slate-300">
-                {base}
-                <span className="text-amber-200"> (+{growth}/lv)</span>
+                {baseLabel}
+                <span className="text-amber-200"> (+{growthLabel}/lv)</span>
               </span>
               <span className="font-mono text-base text-emerald-200">
                 {total}

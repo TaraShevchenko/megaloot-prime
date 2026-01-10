@@ -1,5 +1,6 @@
 import { StaticImageData } from "next/image";
-import { CharacteristicsEnum, RarityEnum } from "shared/types";
+import { CharacteristicsEnum } from "shared/characteristics";
+import { RarityEnum } from "shared/rarity";
 import hammerCommonImage from "./lvl1.png";
 import hammerUncommonImage from "./lvl2.png";
 import hammerRareImage from "./lvl3.png";

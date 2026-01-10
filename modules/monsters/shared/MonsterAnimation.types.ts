@@ -8,7 +8,6 @@ export type AnimationDefinition = {
 };
 
 export type MonsterAnimationConfig = {
-  keyframePrefix: string;
   frameSize: number;
   animations: Record<AnimationName, AnimationDefinition>;
   defaultTitle?: string;

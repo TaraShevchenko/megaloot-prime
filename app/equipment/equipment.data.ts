@@ -2,7 +2,7 @@ import type { StaticImageData } from "next/image";
 import { EquipmentStatRanges } from "modules/equipment/shared/types";
 import { STAT_RANGES as HAMMER_STAT_RANGES } from "modules/equipment/weapon/hammer/constants";
 import { STAT_RANGES as SWORD_STAT_RANGES } from "modules/equipment/weapon/sword/constants";
-import { RarityEnum } from "shared/types";
+import { RarityEnum } from "shared/rarity";
 import hammerImage from "modules/equipment/weapon/hammer/lvl3.png";
 import swordImage from "modules/equipment/weapon/sword/image.png";
 
