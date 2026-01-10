@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import type { MonsterId } from "modules/monsters/useMonsterAnimation";
+import { MONSTERS, type MonsterId } from "modules/monsters";
 import { cn } from "shared/utils/cn";
 import { MonsterRow } from "./components/MonsterRow";
-import { MONSTERS } from "./monsters.data";
 
 export default function MonstersPage() {
   const [levels, setLevels] = useState<Record<MonsterId, number>>(() =>

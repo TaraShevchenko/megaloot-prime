@@ -1,7 +1,7 @@
 import {
   CHARACTERISTIC_LABELS,
   CHARACTERISTICS_ORDER,
-} from "modules/monsters/shared/MonsterStats";
+} from "shared/characteristics";
 import { RARITY_LABELS, type RarityEnum } from "shared/types";
 import type { EquipmentEntry } from "../equipment.data";
 
@@ -11,9 +11,9 @@ type EquipmentStatsBlockProps = {
 };
 
 export function EquipmentStatsBlock({
-  rarity,
-  statsRanges,
-}: EquipmentStatsBlockProps) {
+                                      rarity,
+                                      statsRanges,
+                                    }: EquipmentStatsBlockProps) {
   const statsForRarity = statsRanges[rarity] ?? {};
   const statsOrder = CHARACTERISTICS_ORDER.filter(
     (stat) => statsForRarity[stat],

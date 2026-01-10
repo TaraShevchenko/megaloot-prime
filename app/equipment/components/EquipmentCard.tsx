@@ -4,7 +4,7 @@ import {
   RARITY_LABELS,
   RARITY_ORDER,
   RarityEnum,
-} from "shared/types";
+} from "shared/rarity";
 import { cn } from "shared/utils/cn";
 import type { EquipmentEntry } from "../equipment.data";
 import { EquipmentStatsBlock } from "./EquipmentStatsBlock";
