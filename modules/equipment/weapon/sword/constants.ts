@@ -1,6 +1,19 @@
-import { CharacteristicsEnum } from "shared/characteristics";
-import { RarityEnum } from "shared/rarity";
+import { StaticImageData } from "next/image";
+import { CharacteristicsEnum, RarityEnum } from "shared/types";
+import swordCommonImage from "./lvl1.png";
+import swordUncommonImage from "./lvl2.png";
+import swordRareImage from "./lvl3.png";
+import swordEpicImage from "./lvl4.png";
+import swordLegendaryImage from "./lvl5.png";
 import { EquipmentStatRanges } from "../../shared/types";
+
+export const SKIN_BY_RARITY: Record<RarityEnum, StaticImageData> = {
+  [RarityEnum.COMMON]: swordCommonImage,
+  [RarityEnum.UNCOMMON]: swordUncommonImage,
+  [RarityEnum.RARE]: swordRareImage,
+  [RarityEnum.EPIC]: swordEpicImage,
+  [RarityEnum.LEGENDARY]: swordLegendaryImage,
+};
 
 export const STAT_RANGES: EquipmentStatRanges = {
   [RarityEnum.COMMON]: {
