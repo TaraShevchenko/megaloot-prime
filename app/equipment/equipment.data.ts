@@ -8,7 +8,7 @@ import {
   SKIN_BY_RARITY as SWORD_SKIN_BY_RARITY,
   STAT_RANGES as SWORD_STAT_RANGES,
 } from "modules/equipment/weapon/sword/constants";
-import { RarityEnum } from "shared/types";
+import { RarityEnum } from "shared/rarity";
 
 export type EquipmentEntry = {
   id: string;

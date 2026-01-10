@@ -21,6 +21,7 @@ import {
   ANIMATION_CONFIG as ORK_ANIMATION_CONFIG,
   CHARACTERISTICS as ORK_CHARACTERISTICS,
 } from "./ork/constants";
+import { formatMonsterName } from "./shared/monsters.utils";
 
 export enum MonsterId {
   EvilWitch = "evil-witch",
@@ -35,9 +36,6 @@ export type MonsterEntry = {
   characteristics: Characteristics;
   frameSize: number;
 };
-
-const formatMonsterName = (monsterId: MonsterId) =>
-  monsterId.replace(/-/g, " ").replace(/^\w/, (match) => match.toUpperCase());
 
 export const MONSTERS: MonsterEntry[] = [
   {
