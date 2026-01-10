@@ -6,7 +6,7 @@ import attackSprite from "./assets/attack.png";
 import deathSprite from "./assets/death.png";
 import getHitSprite from "./assets/get-hit.png";
 import idleSprite from "./assets/idle.png";
-import type { MonsterAnimationConfig } from "../shared/MonsterAnimation.types";
+import type { MonsterAnimationConfig } from "../../shared/monster-animation.types";
 
 const FRAME_SIZE = 280;
 const FRAME_DURATION_MS = 100;

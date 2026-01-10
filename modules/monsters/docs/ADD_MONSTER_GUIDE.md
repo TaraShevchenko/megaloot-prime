@@ -19,7 +19,7 @@ import idleSprite from "./assets/idle.png";
 import attackSprite from "./assets/attack.png";
 import getHitSprite from "./assets/get-hit.png";
 import deathSprite from "./assets/death.png";
-import type { MonsterAnimationConfig } from "../shared/MonsterAnimation.types";
+import type { MonsterAnimationConfig } from "../shared/monster-animation.types";
 
 const FRAME_SIZE = 200;
 const FRAME_DURATION_MS = 100;
@@ -89,7 +89,7 @@ export const CHARACTERISTICS: Characteristics = {
 ```tsx
 "use client";
 
-import { createMonsterAnimation } from "../shared/MonsterAnimation.hook";
+import { createMonsterAnimation } from "../shared/monster-animation.hook";
 import { ANIMATION_CONFIG } from "./constants";
 
 const { MonsterAnimation, useMonsterAnimation } = createMonsterAnimation(
@@ -101,12 +101,8 @@ export { useMonsterAnimation };
 ```
 
 ## 4) Зарегистрировать монстра
-Обновите `modules/monsters/index.ts`:
-- Добавьте новый элемент в `MonsterId`.
-- Импортируйте новый хук `useMonsterAnimation`.
-- Импортируйте `ANIMATION_CONFIG` и `CHARACTERISTICS`.
-- Добавьте новый элемент в `MONSTERS` с `frameSize: ANIMATION_CONFIG.frameSize`.
-- Добавьте новый хук в `monsterAnimationHooks`.
+- Добавьте новый элемент в MONSTER_IDS и MONSTERS (modules/monsters/shared/monsters.data.ts).
+- Добавьте новый элемент в monsterAnimationHooks (modules/monsters/shared/monster-animation.data).
 
 ## 5) Проверить в UI
 - Запустите приложение: `npm run dev`.

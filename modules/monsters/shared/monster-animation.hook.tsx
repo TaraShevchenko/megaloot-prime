@@ -1,19 +1,19 @@
 "use client";
 
 import { useCallback } from "react";
-import { createMonsterAnimationStore } from "./MonsterAnimation.store";
+import { createMonsterAnimationStore } from "./monster-animation.store";
 import type {
   MonsterAnimationConfig,
   MonsterAnimationProps,
-} from "./MonsterAnimation.types";
-import { MonsterAnimationUI } from "./MonsterAnimation.ui";
+} from "./monster-animation.types";
+import { MonsterAnimationUi } from "./monster-animation.ui";
 
 export function createMonsterAnimation(config: MonsterAnimationConfig) {
   const useStore = createMonsterAnimationStore();
 
   function MonsterAnimation({ className, ...props }: MonsterAnimationProps) {
     return (
-      <MonsterAnimationUI
+      <MonsterAnimationUi
         {...props}
         config={config}
         useStore={useStore}

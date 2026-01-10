@@ -2,6 +2,12 @@
 
 Ключевые точки по файлам из `modules/monsters/shared` и `shared/characteristics.ts`.
 
+
+## monsters.types.ts
+- Centralizes MonsterEnum, MonsterId, MonsterEntry, Monster, and MonsterEnumSchema built on MONSTER_IDS.
+- MONSTER_IDS and MONSTERS stay defined in modules/monsters/shared/monsters.data.ts, but type consumers only reach this file.
+- UI components import MonsterEntry/Monster while animation hooks refer to MonsterEnum/MonsterId here.
+
 ## MonsterAnimation.hook.tsx
 - Фабрика `createMonsterAnimation` привязывает конфиг анимаций к компоненту и хуку.
 - `MonsterAnimation` прокидывает `config` и `useStore` в UI-слой.
