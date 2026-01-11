@@ -1,70 +1,57 @@
 "use client";
 
-import { create } from "zustand";
-import type { MonsterStoreState } from "./monsters.types";
-
-type MonsterLifecycleInit = {
-  level: number;
-  maxHp: number;
-};
+import { createStore } from "zustand/vanilla";
+import type {
+  MonsterLifecycleActions,
+  MonsterLifecycleStore,
+  MonsterLifecycleStoreOptions,
+  MonsterStoreState,
+} from "./monster-lifecycle.types";
 
 export const createMonsterLifecycleStore = ({
+  monsterId,
   level,
   maxHp,
-}: MonsterLifecycleInit) =>
-  create<MonsterStoreState>((set, get) => ({
-    level,
-    maxHp,
-    hp: maxHp,
-    isDead: false,
-    setLevel: (nextLevel, nextMaxHp) => {
-      const normalizedLevel = Math.max(1, Math.round(nextLevel));
-      const boundedMax = Math.max(1, nextMaxHp);
+  onDeath,
+}: MonsterLifecycleStoreOptions) =>
+  createStore<MonsterStoreState>((set, get) => {
+    const normalizedLevel = Math.max(1, Math.round(level));
+    const boundedMax = Math.max(1, maxHp);
 
-      set(() => ({
-        level: normalizedLevel,
-        maxHp: boundedMax,
-        hp: boundedMax,
-        isDead: false,
-      }));
-    },
-    setMaxHp: (nextMaxHp) => {
-      const boundedMax = Math.max(1, nextMaxHp);
-      set((state) => {
-        const boundedHp = Math.min(Math.max(0, state.hp), boundedMax);
-        return {
-          ...state,
-          maxHp: boundedMax,
-          hp: boundedHp,
-          isDead: boundedHp <= 0,
-        };
-      });
-    },
-    setHp: (nextHp) => {
-      set((state) => {
-        const bounded = Math.min(Math.max(0, nextHp), state.maxHp);
-        return {
-          ...state,
-          hp: bounded,
-          isDead: bounded <= 0,
-        };
-      });
-    },
-    takePercentDamage: (percentOfMax) => {
-      const { maxHp, hp } = get();
-      const safePercent = Math.max(0, percentOfMax);
-      const damage = Math.max(1, Math.round((maxHp * safePercent) / 100));
-      const nextHp = Math.max(0, hp - damage);
+    return {
+      level: normalizedLevel,
+      maxHp: boundedMax,
+      hp: boundedMax,
+      isDead: false,
+      takeDamage: (amount) => {
+        const prev = get();
+        const safeAmount = Math.max(0, Math.round(amount));
+        if (safeAmount <= 0) {
+          return;
+        }
+        const nextHp = Math.max(0, prev.hp - safeAmount);
+        const nextIsDead = nextHp <= 0;
 
-      set({
-        hp: nextHp,
-        isDead: nextHp <= 0,
-      });
-    },
-    restoreFull: () =>
-      set((state) => ({
-        ...state,
-        hp: state.maxHp,
-        isDead: false,
-      })),
-  }));
+        set({
+          hp: nextHp,
+          isDead: nextIsDead,
+        });
+
+        if (!prev.isDead && nextIsDead && onDeath) {
+          const actions: MonsterLifecycleActions = {
+            takeDamage: get().takeDamage,
+          };
+          onDeath(
+            {
+              monsterId,
+              hp: nextHp,
+              maxHp: prev.maxHp,
+              level: prev.level,
+              isDead: nextIsDead,
+            },
+            actions,
+          );
+        }
+      },
+    };
+  }) as MonsterLifecycleStore;

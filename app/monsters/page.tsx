@@ -1,5 +1,6 @@
+import { MONSTERS } from "modules/monsters";
 import { cn } from "shared/utils/cn";
-import { MonstersList } from "./components/MonstersList";
+import { MonsterRow } from "./components/MonsterRow";
 
 export default function MonstersPage() {
   return (
@@ -35,7 +36,9 @@ export default function MonstersPage() {
             "animate-[fade-rise_0.7s_ease_both]",
           )}
         >
-          <MonstersList />
+          {MONSTERS.map((monster, index) => (
+            <MonsterRow key={monster.id} monster={monster} index={index} />
+          ))}
         </section>
       </div>
     </div>

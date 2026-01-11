@@ -5,7 +5,10 @@ import type {
 import type { MonsterId } from "./monsters.types";
 
 export const formatMonsterName = (monsterId: MonsterId) =>
-  monsterId.replace(/-/g, " ").replace(/^\w/, (match) => match.toUpperCase());
+  monsterId
+    .toLowerCase()
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (match) => match.toUpperCase());
 
 export const getMonsterKeyframeBase = (rawId: string) => {
   const safeId = rawId.replace(/[^a-zA-Z0-9_-]/g, "");
