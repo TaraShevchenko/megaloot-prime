@@ -1,18 +1,18 @@
 import { StaticImageData } from "next/image";
 import { CharacteristicsEnum, RarityEnum } from "shared/types";
-import swordCommonImage from "./Common.png";
-import swordEpicImage from "./Epic.png";
-import swordLegendaryImage from "./Legendary.png";
-import swordRareImage from "./Rare.png";
-import swordUncommonImage from "./Uncommon.png";
+import wandCommonImage from "./Common.png";
+import wandEpicImage from "./Epic.png";
+import wandLegendaryImage from "./Legendary.png";
+import wandRareImage from "./Rare.png";
+import wandUncommonImage from "./Uncommon.png";
 import { EquipmentStatRanges } from "../../shared/types";
 
 export const SKIN_BY_RARITY: Record<RarityEnum, StaticImageData> = {
-  [RarityEnum.COMMON]: swordCommonImage,
-  [RarityEnum.UNCOMMON]: swordUncommonImage,
-  [RarityEnum.RARE]: swordRareImage,
-  [RarityEnum.EPIC]: swordEpicImage,
-  [RarityEnum.LEGENDARY]: swordLegendaryImage,
+  [RarityEnum.COMMON]: wandCommonImage,
+  [RarityEnum.UNCOMMON]: wandUncommonImage,
+  [RarityEnum.RARE]: wandRareImage,
+  [RarityEnum.EPIC]: wandEpicImage,
+  [RarityEnum.LEGENDARY]: wandLegendaryImage,
 };
 
 export const STAT_RANGES: EquipmentStatRanges = {
