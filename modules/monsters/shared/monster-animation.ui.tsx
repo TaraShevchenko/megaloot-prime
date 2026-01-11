@@ -1,49 +1,50 @@
 "use client";
 
 import { useId, useMemo } from "react";
-import type { CSSProperties } from "react";
-import type { StoreApi, UseBoundStore } from "zustand";
 import { cn } from "shared/utils/cn";
+import type { StoreApi, UseBoundStore } from "zustand";
 import type {
-  AnimationName,
-  AnimationDefinition,
   MonsterAnimationConfig,
   MonsterAnimationProps,
   MonsterAnimationState,
-} from "./MonsterAnimation.types";
+} from "./monster-animation.types";
+import {
+  getMonsterKeyframeBase,
+  getMonsterKeyframesCss,
+} from "./monsters.utils";
 
 type MonsterAnimationUIProps = MonsterAnimationProps & {
   config: MonsterAnimationConfig;
   useStore: UseBoundStore<StoreApi<MonsterAnimationState>>;
 };
 
-export function MonsterAnimationUI({
+export function MonsterAnimationUi({
   config,
   useStore,
   className,
   title,
 }: MonsterAnimationUIProps) {
+  // Store-driven animation state and handlers.
   const animation = useStore((state) => state.animation);
   const playId = useStore((state) => state.playId);
   const startQueued = useStore((state) => state.startQueued);
   const finish = useStore((state) => state.finish);
+
+  // Derived config values for display and layout.
   const data = config.animations[animation];
   const baseClassName = cn("block bg-no-repeat", className);
   const displayTitle = title ?? config.defaultTitle ?? "Monster";
   const frameSize = `${config.frameSize}px`;
+
+  // Stable keyframe naming and generated CSS.
   const rawId = useId();
-  const safeId = rawId.replace(/[^a-zA-Z0-9_-]/g, "");
-  const keyframeBase = safeId ? `monster-${safeId}` : "monster";
+  const keyframeBase = getMonsterKeyframeBase(rawId);
   const keyframesCss = useMemo(() => {
-    const entries = Object.entries(
-      config.animations,
-    ) as Array<[AnimationName, AnimationDefinition]>;
-    return entries
-      .map(([name, def]) => {
-        return `@keyframes ${keyframeBase}-${name} { from { background-position: 0 0; } to { background-position: -${def.sheetWidth}px 0; } }`;
-      })
-      .join("\n");
+    return getMonsterKeyframesCss(config.animations, keyframeBase);
   }, [config.animations, keyframeBase]);
+  const keyframesStyle = <style>{keyframesCss}</style>;
+
+  // Base inline style for current animation.
   const baseStyle = {
     width: frameSize,
     height: frameSize,
@@ -52,8 +53,7 @@ export function MonsterAnimationUI({
     animationName: `${keyframeBase}-${animation}`,
     animationDuration: `${data.durationMs}ms`,
     animationTimingFunction: `steps(${data.frames})`,
-  } as CSSProperties;
-  const keyframesStyle = <style>{keyframesCss}</style>;
+  };
 
   if (animation === "idle") {
     return (

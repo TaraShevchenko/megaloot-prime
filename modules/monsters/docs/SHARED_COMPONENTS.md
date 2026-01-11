@@ -1,24 +1,34 @@
-# Shared-компоненты монстров
+﻿# Shared-компоненты монстров
 
 Ключевые точки по файлам из `modules/monsters/shared` и `shared/characteristics.ts`.
 
-## MonsterAnimation.hook.tsx
+## monsters.types.ts
+- Centralizes MonsterEnum, MonsterId, MonsterEntry, Monster, and MonsterEnumSchema built on MONSTER_IDS.
+- MONSTER_IDS and MONSTERS stay defined in modules/monsters/shared/monsters.data.ts, but type consumers only reach this file.
+- UI components import MonsterEntry/Monster while animation hooks refer to MonsterEnum/MonsterId here.
+
+## monster-lifecycle.store.ts
+- Zustand-стор минимальной жизнедеятельности монстра: хранит `level`, `maxHp`, `hp`, `isDead`.
+- Действия: `takeDamage`. Вычисления в абсолютных величинах.
+- При переходе в `isDead` дергает `onDeath`, передавая контекст монстра и ссылки на действия.
+
+## monster-animation.hook.tsx
 - Фабрика `createMonsterAnimation` привязывает конфиг анимаций к компоненту и хуку.
 - `MonsterAnimation` прокидывает `config` и `useStore` в UI-слой.
 - `useMonsterAnimation` дает `Monster` и методы `playAttack`, `playDeath`, `playGetHit`.
 
-## MonsterAnimation.store.ts
+## monster-animation.store.ts
 - Zustand-стор хранит `animation`, очередь `queued` и `playId`.
 - `request` ставит анимацию в очередь.
 - `startQueued` запускает очередь только когда текущая анимация `idle`.
 - `finish` возвращает состояние в `idle` и обновляет `playId`.
 
-## MonsterAnimation.types.ts
+## monster-animation.types.ts
 - Типы для имен анимаций, описаний спрайтов и конфига.
 - `MonsterAnimationProps` описывает только `className` и `title`.
 - `MonsterAnimationState` задает контракт стора.
 
-## MonsterAnimation.ui.tsx
+## monster-animation.ui.tsx
 - Рендерит спрайт и динамически генерирует keyframes для всех анимаций.
 - В `idle` анимация зациклена и может принять очередь.
 - В не-`idle` анимации проигрываются один раз и фиксируют последний кадр.

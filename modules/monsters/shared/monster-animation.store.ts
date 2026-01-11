@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import type { MonsterAnimationState } from "./MonsterAnimation.types";
+import type { MonsterAnimationState } from "./monster-animation.types";
 
 export const createMonsterAnimationStore = () =>
   create<MonsterAnimationState>((set, get) => ({

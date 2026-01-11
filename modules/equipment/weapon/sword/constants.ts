@@ -1,5 +1,6 @@
 import { StaticImageData } from "next/image";
-import { CharacteristicsEnum, RarityEnum } from "shared/types";
+import { RarityEnum } from "shared/rarity";
+import { CharacteristicsEnum } from "shared/characteristics";
 import swordCommonImage from "./Common.png";
 import swordEpicImage from "./Epic.png";
 import swordLegendaryImage from "./Legendary.png";

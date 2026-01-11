@@ -15,18 +15,18 @@ const ACTION_STYLES: Record<ActionTone, string> = {
 type ActionButtonProps = {
   tone: ActionTone;
   label: string;
-  onClick: () => void;
-};
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-export function ActionButton({ tone, label, onClick }: ActionButtonProps) {
+export function ActionButton({ tone, label, ...props }: ActionButtonProps) {
   return (
     <button
       type="button"
-      onClick={onClick}
+      {...props}
       className={cn(
         "cursor-pointer rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition",
         "shadow-[0_10px_30px_rgba(0,0,0,0.25)] hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(0,0,0,0.35)]",
         ACTION_STYLES[tone],
+        props.className,
       )}
     >
       {label}

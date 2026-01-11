@@ -20,7 +20,7 @@ import {
   SKIN_BY_RARITY as WAND_SKIN_BY_RARITY,
   STAT_RANGES as WAND_STAT_RANGES,
 } from "modules/equipment/weapon/wand/constants";
-import { RarityEnum } from "shared/types";
+import { RarityEnum } from "shared/rarity";
 
 export type EquipmentEntry = {
   id: string;

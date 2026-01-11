@@ -1,29 +1,8 @@
-"use client";
-
-import { useState } from "react";
-import { MONSTERS, type MonsterId } from "modules/monsters";
+import { MONSTERS } from "modules/monsters";
 import { cn } from "shared/utils/cn";
 import { MonsterRow } from "./components/MonsterRow";
 
 export default function MonstersPage() {
-  const [levels, setLevels] = useState<Record<MonsterId, number>>(() =>
-    MONSTERS.reduce(
-      (acc, monster) => {
-        acc[monster.id] = 1;
-        return acc;
-      },
-      {} as Record<MonsterId, number>,
-    ),
-  );
-
-  const updateLevel = (id: MonsterId, nextLevel: number) => {
-    if (!Number.isFinite(nextLevel)) {
-      return;
-    }
-    const normalized = Math.max(1, Math.round(nextLevel));
-    setLevels((prev) => ({ ...prev, [id]: normalized }));
-  };
-
   return (
     <div
       className={cn(
@@ -58,13 +37,7 @@ export default function MonstersPage() {
           )}
         >
           {MONSTERS.map((monster, index) => (
-            <MonsterRow
-              key={monster.id}
-              monster={monster}
-              index={index}
-              level={levels[monster.id] ?? 1}
-              onLevelChange={(nextLevel) => updateLevel(monster.id, nextLevel)}
-            />
+            <MonsterRow key={monster.id} monster={monster} index={index} />
           ))}
         </section>
       </div>
