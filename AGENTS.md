@@ -25,6 +25,13 @@ Use npm scripts in `package.json`:
 - Route files are convention-based (`page.tsx`, `layout.tsx`).
 - Use path aliases from `tsconfig.json` (`app/*`, `modules/*`, `shared/*`) instead of deep relative imports when it improves clarity.
 
+## Monsters Module
+- Monster folders live in `modules/monsters/monsters/<monster-id>` using kebab-case and contain `assets/attack.png`, `assets/idle.png`, `assets/get-hit.png`, `assets/death.png`; keep sprite sheets horizontal with `sheetWidth` matching `frameSize * frames` and set `FRAME_SIZE`/`FRAME_DURATION_MS` constants in `constants.ts`.
+- Each monster exports a `constants.ts` with `ANIMATION_CONFIG` (`MonsterAnimationConfig`) and `CHARACTERISTICS` (`CharacteristicsEnum`/`Characteristics` from `shared/characteristics`), and an `index.tsx` that is `"use client";` and uses `createMonsterAnimation(ANIMATION_CONFIG)` to export `default MonsterAnimation` plus `useMonsterAnimation`.
+- Register new monsters in `modules/monsters/shared/monsters.data.ts` (add to `MONSTER_IDS` and `MONSTERS` using `formatMonsterName`) and wire hooks in `modules/monsters/shared/monster-animation.data.ts` (`monsterAnimationHooks` keyed by `MonsterEnum`).
+- Reuse shared types/helpers (`modules/monsters/shared/monsters.types.ts`, `monster-animation.*`, `monster-lifecycle.*`, `monsters.utils.ts`) instead of redefining logic; keep lifecycle math normalized like the existing stores (level/hp bounded, no negative damage).
+- Before editing/adding monsters, consult `modules/monsters/docs/ADD_MONSTER_GUIDE.md` for the step sequence and `modules/monsters/docs/SHARED_COMPONENTS.md` for expectations around shared animation/state components.
+
 ## Testing Guidelines
 There is no test runner configured yet. If you add tests, document the new command(s) in this file and prefer conventional naming like `*.test.tsx` or a `__tests__/` folder near the module under test.
 

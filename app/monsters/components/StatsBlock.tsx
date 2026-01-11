@@ -5,8 +5,8 @@ import {
   CHARACTERISTICS_ORDER,
   formatCharacteristicValue,
   getScaledCharacteristics,
-} from "shared/characteristics";
-import type { Characteristics } from "shared/characteristics";
+} from "shared/types/characteristics";
+import type { Characteristics } from "shared/types/characteristics";
 
 type StatsBlockProps = {
   level: number;

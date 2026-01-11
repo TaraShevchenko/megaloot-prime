@@ -4,8 +4,8 @@
 
 ## monsters.types.ts
 - Centralizes MonsterEnum, MonsterId, MonsterEntry, Monster, and MonsterEnumSchema built on MONSTER_IDS.
-- MONSTER_IDS and MONSTERS stay defined in modules/monsters/shared/monsters.data.ts, but type consumers only reach this file.
-- UI components import MonsterEntry/Monster while animation hooks refer to MonsterEnum/MonsterId here.
+- MONSTER_IDS теперь лежит в этом файле и экспортируется наружу.
+- UI-компоненты берут MonsterEntry/Monster, а хуки — MonsterEnum/MonsterId здесь.
 
 ## monster-lifecycle.store.ts
 - Zustand-стор минимальной жизнедеятельности монстра: хранит `level`, `maxHp`, `hp`, `isDead`.

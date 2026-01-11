@@ -14,41 +14,36 @@ import {
   ANIMATION_CONFIG as ORK_ANIMATION_CONFIG,
   CHARACTERISTICS as ORK_CHARACTERISTICS,
 } from "modules/monsters/monsters/ork/constants";
-import type { MonsterEntry } from "./monsters.types";
+import { MonsterEnum, MONSTER_IDS, type MonsterEntry } from "./monsters.types";
 import { formatMonsterName } from "./monsters.utils";
 
-export const MONSTER_IDS = [
-  "EVIL_WITCH",
-  "FIRE_WORM",
-  "ORK",
-  "KNIGHT",
-] as const;
+export { MONSTER_IDS };
 
 export const MONSTERS: MonsterEntry[] = [
   {
-    id: "EVIL_WITCH",
-    name: formatMonsterName("EVIL_WITCH"),
+    id: MonsterEnum.EVIL_WITCH,
+    name: formatMonsterName(MonsterEnum.EVIL_WITCH),
     characteristics: EVIL_WITCH_CHARACTERISTICS,
     frameSize: EVIL_WITCH_ANIMATION_CONFIG.frameSize,
     deathDurationMs: EVIL_WITCH_ANIMATION_CONFIG.animations.death.durationMs,
   },
   {
-    id: "FIRE_WORM",
-    name: formatMonsterName("FIRE_WORM"),
+    id: MonsterEnum.FIRE_WORM,
+    name: formatMonsterName(MonsterEnum.FIRE_WORM),
     characteristics: FIRE_WORM_CHARACTERISTICS,
     frameSize: FIRE_WORM_ANIMATION_CONFIG.frameSize,
     deathDurationMs: FIRE_WORM_ANIMATION_CONFIG.animations.death.durationMs,
   },
   {
-    id: "KNIGHT",
-    name: formatMonsterName("KNIGHT"),
+    id: MonsterEnum.KNIGHT,
+    name: formatMonsterName(MonsterEnum.KNIGHT),
     characteristics: KNIGHT_CHARACTERISTICS,
     frameSize: KNIGHT_ANIMATION_CONFIG.frameSize,
     deathDurationMs: KNIGHT_ANIMATION_CONFIG.animations.death.durationMs,
   },
   {
-    id: "ORK",
-    name: formatMonsterName("ORK"),
+    id: MonsterEnum.ORK,
+    name: formatMonsterName(MonsterEnum.ORK),
     characteristics: ORK_CHARACTERISTICS,
     frameSize: ORK_ANIMATION_CONFIG.frameSize,
     deathDurationMs: ORK_ANIMATION_CONFIG.animations.death.durationMs,
