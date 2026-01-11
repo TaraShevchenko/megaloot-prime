@@ -5,12 +5,12 @@ import { useState } from "react";
 import { type MonsterEntry } from "modules/monsters";
 import { useMonsterAnimation } from "modules/monsters/client";
 import { createMonsterLifecycleStore } from "modules/monsters/shared/monster-lifecycle.store";
-import { useStore } from "zustand";
 import {
   CharacteristicsEnum,
   getScaledCharacteristics,
-} from "shared/characteristics";
+} from "shared/types/characteristics";
 import { cn } from "shared/utils/cn";
+import { useStore } from "zustand";
 import { ActionButton } from "./ActionButton";
 import { StatsBlock } from "./StatsBlock";
 

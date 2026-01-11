@@ -1,20 +1,20 @@
+import type { EquipmentEntry } from "modules/equipment";
 import {
   CHARACTERISTIC_LABELS,
   CHARACTERISTICS_ORDER,
-} from "shared/characteristics";
-import { RARITY_LABELS, type RarityEnum } from "shared/rarity";
-import type { EquipmentEntry } from "../equipment.data";
+} from "shared/types/characteristics";
+import { RARITY_LABELS, type RarityEnum } from "shared/types/rarity";
 
 type EquipmentStatsBlockProps = {
   rarity: RarityEnum;
-  statsRanges: EquipmentEntry["statsRanges"];
+  statRanges: EquipmentEntry["statRanges"];
 };
 
 export function EquipmentStatsBlock({
   rarity,
-  statsRanges,
+  statRanges,
 }: EquipmentStatsBlockProps) {
-  const statsForRarity = statsRanges[rarity] ?? {};
+  const statsForRarity = statRanges[rarity] ?? {};
   const statsOrder = CHARACTERISTICS_ORDER.filter(
     (stat) => statsForRarity[stat],
   );

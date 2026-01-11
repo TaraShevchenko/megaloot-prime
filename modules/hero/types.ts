@@ -1,6 +1,6 @@
 import { Equipment } from "modules/equipment";
 import { Inventory } from "modules/inventory";
-import { Characteristics } from "shared/characteristics";
+import { Characteristics } from "shared/types/characteristics";
 
 export type Hero = {
   hp: number;

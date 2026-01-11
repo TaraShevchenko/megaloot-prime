@@ -4,7 +4,7 @@ import {
   RARITY_LABELS,
   RARITY_ORDER,
   RarityEnum,
-} from "shared/rarity";
+} from "shared/types/rarity";
 import { cn } from "shared/utils/cn";
 import type { EquipmentEntry } from "../equipment.data";
 import { EquipmentStatsBlock } from "./EquipmentStatsBlock";
@@ -49,10 +49,10 @@ export function EquipmentCard({
             style={{ backgroundImage: RARITY_BACKGROUNDS[rarity] }}
           >
             <Image
-              quality={100}
               src={equipment.skins[rarity]}
               alt={equipment.name}
               className="h-24 w-24 object-contain drop-shadow-[0_16px_28px_rgba(0,0,0,0.45)]"
+              style={{ imageRendering: "pixelated" }}
             />
           </div>
 
@@ -81,7 +81,7 @@ export function EquipmentCard({
         </div>
         <EquipmentStatsBlock
           rarity={rarity}
-          statsRanges={equipment.statsRanges}
+          statRanges={equipment.statRanges}
         />
       </div>
     </div>

@@ -1,7 +1,7 @@
 import {
   CharacteristicsEnum,
   type Characteristics,
-} from "shared/characteristics";
+} from "shared/types/characteristics";
 import attackSprite from "./assets/attack.png";
 import deathSprite from "./assets/death.png";
 import getHitSprite from "./assets/get-hit.png";

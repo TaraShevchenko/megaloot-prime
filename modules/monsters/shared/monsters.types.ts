@@ -1,6 +1,12 @@
-import { Characteristics } from "shared/characteristics";
+import { Characteristics } from "shared/types/characteristics";
 import z from "zod";
-import { MONSTER_IDS } from "./monsters.data";
+
+export const MONSTER_IDS = [
+  "EVIL_WITCH",
+  "FIRE_WORM",
+  "ORK",
+  "KNIGHT",
+] as const;
 
 export const MonsterEnumSchema = z.enum(MONSTER_IDS);
 export type MonsterId = z.infer<typeof MonsterEnumSchema>;
