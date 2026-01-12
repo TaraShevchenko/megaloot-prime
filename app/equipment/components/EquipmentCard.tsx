@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { EquipmentEntry } from "modules/equipment";
 import {
   RARITY_BACKGROUNDS,
   RARITY_LABELS,
@@ -6,7 +7,6 @@ import {
   RarityEnum,
 } from "shared/types/rarity";
 import { cn } from "shared/utils/cn";
-import type { EquipmentEntry } from "../equipment.data";
 import { EquipmentStatsBlock } from "./EquipmentStatsBlock";
 
 type EquipmentCardProps = {
