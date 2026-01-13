@@ -7,7 +7,7 @@ import {
   RarityEnum,
 } from "shared/types/rarity";
 import { cn } from "shared/utils/cn";
-import { EquipmentStatsBlock } from "./EquipmentStatsBlock";
+import { EquipmentStatsBlock } from "./equipment-stats-block";
 
 type EquipmentCardProps = {
   equipment: EquipmentEntry;

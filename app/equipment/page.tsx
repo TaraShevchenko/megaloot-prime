@@ -4,7 +4,7 @@ import { useState } from "react";
 import { EQUIPMENT_ITEMS, type EquipmentId } from "modules/equipment";
 import type { RarityEnum } from "shared/types/rarity";
 import { cn } from "shared/utils/cn";
-import { EquipmentCard } from "./components/EquipmentCard";
+import { EquipmentCard } from "./components/equipment-card";
 
 export default function EquipmentPage() {
   const [rarities, setRarities] = useState<Record<EquipmentId, RarityEnum>>(

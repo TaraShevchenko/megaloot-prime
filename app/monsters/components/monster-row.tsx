@@ -11,8 +11,8 @@ import {
 } from "shared/types/characteristics";
 import { cn } from "shared/utils/cn";
 import { useStore } from "zustand";
-import { ActionButton } from "./ActionButton";
-import { StatsBlock } from "./StatsBlock";
+import { ActionButton } from "./action-button";
+import { StatsBlock } from "./stats-block";
 
 type MonsterRowProps = {
   monster: MonsterEntry;

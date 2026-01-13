@@ -1,6 +1,6 @@
 import { MONSTERS } from "modules/monsters";
 import { cn } from "shared/utils/cn";
-import { MonsterRow } from "./components/MonsterRow";
+import { MonsterRow } from "./components/monster-row";
 
 export default function MonstersPage() {
   return (
