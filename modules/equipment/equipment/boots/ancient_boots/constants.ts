@@ -1,11 +1,11 @@
 import { StaticImageData } from "next/image";
 import { CharacteristicsEnum } from "shared/types/characteristics";
 import { RarityEnum } from "shared/types/rarity";
-import common from "./assets/common.png";
-import epic from "./assets/epic.png";
-import legendary from "./assets/legendary.png";
-import rare from "./assets/rare.png";
-import uncommon from "./assets/uncommon.png";
+import common from "../../boots/ancient_boots/assets/common.png";
+import epic from "../../boots/ancient_boots/assets/epic.png";
+import legendary from "../../boots/ancient_boots/assets/legendary.png";
+import rare from "../../boots/ancient_boots/assets/rare.png";
+import uncommon from "../../boots/ancient_boots/assets/uncommon.png";
 import {
   EquipmentNameMap,
   EquipmentSkinMap,
@@ -21,11 +21,11 @@ export const SKIN_BY_RARITY: EquipmentSkinMap = {
 };
 
 export const NAME_BY_RARITY: EquipmentNameMap = {
-  [RarityEnum.COMMON]: "Oakbound Sword",
-  [RarityEnum.UNCOMMON]: "Stoneheart Sword",
-  [RarityEnum.RARE]: "Steelrend Sword",
-  [RarityEnum.EPIC]: "Dawnbringer Sword",
-  [RarityEnum.LEGENDARY]: "Eternashard Sword",
+  [RarityEnum.COMMON]: "Boots",
+  [RarityEnum.UNCOMMON]: "Greaves",
+  [RarityEnum.RARE]: "Rivetsoul Boots",
+  [RarityEnum.EPIC]: "Auricstride Boots",
+  [RarityEnum.LEGENDARY]: "Starforged Boots",
 };
 
 export const STAT_RANGES: EquipmentStatRanges = {

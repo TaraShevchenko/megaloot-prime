@@ -1,11 +1,11 @@
 import { StaticImageData } from "next/image";
 import { CharacteristicsEnum } from "shared/types/characteristics";
 import { RarityEnum } from "shared/types/rarity";
-import common from "./assets/common.png";
-import epic from "./assets/epic.png";
-import legendary from "./assets/legendary.png";
-import rare from "./assets/rare.png";
-import uncommon from "./assets/uncommon.png";
+import common from "../../armor/ancient_armor/assets/common.png";
+import epic from "../../armor/ancient_armor/assets/epic.png";
+import legendary from "../../armor/ancient_armor/assets/legendary.png";
+import rare from "../../armor/ancient_armor/assets/rare.png";
+import uncommon from "../../armor/ancient_armor/assets/uncommon.png";
 import {
   EquipmentNameMap,
   EquipmentSkinMap,
@@ -21,11 +21,11 @@ export const SKIN_BY_RARITY: EquipmentSkinMap = {
 };
 
 export const NAME_BY_RARITY: EquipmentNameMap = {
-  [RarityEnum.COMMON]: "Oakbound Sword",
-  [RarityEnum.UNCOMMON]: "Stoneheart Sword",
-  [RarityEnum.RARE]: "Steelrend Sword",
-  [RarityEnum.EPIC]: "Dawnbringer Sword",
-  [RarityEnum.LEGENDARY]: "Eternashard Sword",
+  [RarityEnum.COMMON]: "Jacket",
+  [RarityEnum.UNCOMMON]: "Cuirass",
+  [RarityEnum.RARE]: "Steelrend Armor",
+  [RarityEnum.EPIC]: "Sunfire Armor",
+  [RarityEnum.LEGENDARY]: "Eternashard Armor",
 };
 
 export const STAT_RANGES: EquipmentStatRanges = {

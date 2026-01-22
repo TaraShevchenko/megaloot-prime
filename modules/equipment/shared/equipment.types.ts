@@ -17,9 +17,13 @@ export const EQUIPMENT_TYPE_ORDER = [
 export const EQUIPMENT_IDS = [
   "SWORD",
   "HAMMER",
-  "BRAID",
+  "SCYTHE",
   "WAND",
   "AXE",
+  "ANCIENT_ARMOR",
+  "ANCIENT_BOOTS",
+  "ANCIENT_TROUSERS",
+  "ANCIENT_HELMET",
 ] as const;
 
 export const EquipmentTypeEnumSchema = z.enum(EQUIPMENT_TYPE_ORDER);
@@ -36,11 +40,12 @@ export type EquipmentStatRanges = Record<
 >;
 
 export type EquipmentSkinMap = Record<RarityEnum, StaticImageData>;
+export type EquipmentNameMap = Record<RarityEnum, string>;
 
 export type EquipmentEntry = {
   id: EquipmentId;
   type: EquipmentType;
-  name: string;
+  name: EquipmentNameMap;
   skins: EquipmentSkinMap;
   defaultRarity: RarityEnum;
   statRanges: EquipmentStatRanges;

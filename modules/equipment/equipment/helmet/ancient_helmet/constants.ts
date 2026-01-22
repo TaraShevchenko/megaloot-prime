@@ -1,11 +1,11 @@
 import { StaticImageData } from "next/image";
 import { CharacteristicsEnum } from "shared/types/characteristics";
 import { RarityEnum } from "shared/types/rarity";
-import common from "./assets/common.png";
-import epic from "./assets/epic.png";
-import legendary from "./assets/legendary.png";
-import rare from "./assets/rare.png";
-import uncommon from "./assets/uncommon.png";
+import common from "../../helmet/ancient_helmet/assets/common.png";
+import epic from "../../helmet/ancient_helmet/assets/epic.png";
+import legendary from "../../helmet/ancient_helmet/assets/legendary.png";
+import rare from "../../helmet/ancient_helmet/assets/rare.png";
+import uncommon from "../../helmet/ancient_helmet/assets/uncommon.png";
 import {
   EquipmentNameMap,
   EquipmentSkinMap,
@@ -21,11 +21,11 @@ export const SKIN_BY_RARITY: EquipmentSkinMap = {
 };
 
 export const NAME_BY_RARITY: EquipmentNameMap = {
-  [RarityEnum.COMMON]: "Oakbound Sword",
-  [RarityEnum.UNCOMMON]: "Stoneheart Sword",
-  [RarityEnum.RARE]: "Steelrend Sword",
-  [RarityEnum.EPIC]: "Dawnbringer Sword",
-  [RarityEnum.LEGENDARY]: "Eternashard Sword",
+  [RarityEnum.COMMON]: "Helm of Twisted Branches",
+  [RarityEnum.UNCOMMON]: "Stoneplate Helm",
+  [RarityEnum.RARE]: "Ironclad Helm",
+  [RarityEnum.EPIC]: "Helm of Radiant Dawn",
+  [RarityEnum.LEGENDARY]: "Celestial Helmt",
 };
 
 export const STAT_RANGES: EquipmentStatRanges = {

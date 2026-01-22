@@ -37,7 +37,7 @@ export function EquipmentCard({
               Equipment
             </p>
             <h2 className="text-xl font-semibold text-slate-100">
-              {equipment.name}
+              {equipment.name[rarity]}
             </h2>
             <p className="mt-1 text-sm text-slate-400">
               Rarity: {RARITY_LABELS[rarity]}
@@ -50,7 +50,7 @@ export function EquipmentCard({
           >
             <Image
               src={equipment.skins[rarity]}
-              alt={equipment.name}
+              alt={equipment.name[rarity]}
               className="h-24 w-24 object-contain drop-shadow-[0_16px_28px_rgba(0,0,0,0.45)]"
               style={{ imageRendering: "pixelated" }}
             />

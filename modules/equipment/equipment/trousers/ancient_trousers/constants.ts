@@ -1,11 +1,11 @@
 import { StaticImageData } from "next/image";
 import { CharacteristicsEnum } from "shared/types/characteristics";
 import { RarityEnum } from "shared/types/rarity";
-import common from "./assets/common.png";
-import epic from "./assets/epic.png";
-import legendary from "./assets/legendary.png";
-import rare from "./assets/rare.png";
-import uncommon from "./assets/uncommon.png";
+import common from "../../trousers/ancient_trousers/assets/common.png";
+import epic from "../../trousers/ancient_trousers/assets/epic.png";
+import legendary from "../../trousers/ancient_trousers/assets/legendary.png";
+import rare from "../../trousers/ancient_trousers/assets/rare.png";
+import uncommon from "../../trousers/ancient_trousers/assets/uncommon.png";
 import {
   EquipmentNameMap,
   EquipmentSkinMap,
@@ -21,11 +21,11 @@ export const SKIN_BY_RARITY: EquipmentSkinMap = {
 };
 
 export const NAME_BY_RARITY: EquipmentNameMap = {
-  [RarityEnum.COMMON]: "Oakbound Sword",
-  [RarityEnum.UNCOMMON]: "Stoneheart Sword",
-  [RarityEnum.RARE]: "Steelrend Sword",
-  [RarityEnum.EPIC]: "Dawnbringer Sword",
-  [RarityEnum.LEGENDARY]: "Eternashard Sword",
+  [RarityEnum.COMMON]: "Trousers",
+  [RarityEnum.UNCOMMON]: "Sabatons",
+  [RarityEnum.RARE]: "Forgedplate Trousers",
+  [RarityEnum.EPIC]: "Goldenflare Trousers",
+  [RarityEnum.LEGENDARY]: "Prismveil Trousers",
 };
 
 export const STAT_RANGES: EquipmentStatRanges = {

@@ -6,14 +6,26 @@ import epic from "./assets/epic.png";
 import legendary from "./assets/legendary.png";
 import rare from "./assets/rare.png";
 import uncommon from "./assets/uncommon.png";
-import { EquipmentStatRanges } from "../../../shared/equipment.types";
+import {
+  EquipmentNameMap,
+  EquipmentSkinMap,
+  EquipmentStatRanges,
+} from "../../../shared/equipment.types";
 
-export const SKIN_BY_RARITY: Record<RarityEnum, StaticImageData> = {
+export const SKIN_BY_RARITY: EquipmentSkinMap = {
   [RarityEnum.COMMON]: common,
   [RarityEnum.UNCOMMON]: uncommon,
   [RarityEnum.RARE]: rare,
   [RarityEnum.EPIC]: epic,
   [RarityEnum.LEGENDARY]: legendary,
+};
+
+export const NAME_BY_RARITY: EquipmentNameMap = {
+  [RarityEnum.COMMON]: "Rootcrusher Hammer",
+  [RarityEnum.UNCOMMON]: "Gravelcore Hammer",
+  [RarityEnum.RARE]: "Warforged Hammer",
+  [RarityEnum.EPIC]: "Goldcrest Hammer",
+  [RarityEnum.LEGENDARY]: "Diamondcore Hammer",
 };
 
 export const STAT_RANGES: EquipmentStatRanges = {
