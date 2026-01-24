@@ -4,7 +4,7 @@ import { useState } from "react";
 import { EQUIPMENT_ITEMS, type EquipmentId } from "modules/equipment";
 import type { RarityEnum } from "shared/types/rarity";
 import { cn } from "shared/utils/cn";
-import { EquipmentCard } from "./components/equipment-card";
+import { EquipmentPreview } from "./components/equipment-preview";
 
 export default function EquipmentPage() {
   const [rarities, setRarities] = useState<Record<EquipmentId, RarityEnum>>(
@@ -55,7 +55,7 @@ export default function EquipmentPage() {
           )}
         >
           {EQUIPMENT_ITEMS.map((equipment, index) => (
-            <EquipmentCard
+            <EquipmentPreview
               key={equipment.id}
               equipment={equipment}
               index={index}

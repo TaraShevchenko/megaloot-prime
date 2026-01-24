@@ -1,36 +1,37 @@
-import Image from "next/image";
 import type { EquipmentEntry } from "modules/equipment";
+import { EquipmentCard, EquipmentStats } from "modules/equipment/client";
 import {
-  RARITY_BACKGROUNDS,
   RARITY_LABELS,
   RARITY_ORDER,
-  RarityEnum,
+  type RarityEnum,
 } from "shared/types/rarity";
 import { cn } from "shared/utils/cn";
-import { EquipmentStatsBlock } from "./equipment-stats-block";
 
-type EquipmentCardProps = {
+type EquipmentPreviewProps = {
   equipment: EquipmentEntry;
   rarity: RarityEnum;
   index: number;
   onRarityChange: (rarity: RarityEnum) => void;
+  className?: string;
 };
 
-export function EquipmentCard({
+export function EquipmentPreview({
   equipment,
   rarity,
   index,
   onRarityChange,
-}: EquipmentCardProps) {
+  className,
+}: EquipmentPreviewProps) {
   return (
     <div
       className={cn(
         "group rounded-3xl border border-[rgba(148,163,184,0.25)] bg-[#101826] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.35)] sm:p-6",
         "animate-[fade-rise_0.6s_ease_both]",
+        className,
       )}
       style={{ animationDelay: `${index * 120}ms` }}
     >
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-stretch">
+      <div className="flex justify-between">
         <div className="flex flex-col gap-4">
           <div>
             <p className="text-[10px] uppercase tracking-[0.4em] text-slate-400">
@@ -44,17 +45,11 @@ export function EquipmentCard({
             </p>
           </div>
 
-          <div
-            className="flex w-20 h-20 items-center justify-center rounded-2xl p-4"
-            style={{ backgroundImage: RARITY_BACKGROUNDS[rarity] }}
-          >
-            <Image
-              src={equipment.skins[rarity]}
-              alt={equipment.name}
-              className="h-24 w-24 object-contain drop-shadow-[0_16px_28px_rgba(0,0,0,0.45)]"
-              // style={{ imageRendering: "pixelated" }}
-            />
-          </div>
+          <EquipmentCard
+            equipment={equipment}
+            rarity={rarity}
+            className="cursor-pointer transition hover:brightness-110"
+          />
 
           <div
             className="flex flex-wrap items-center gap-2"
@@ -79,9 +74,10 @@ export function EquipmentCard({
             ))}
           </div>
         </div>
-        <EquipmentStatsBlock
+        <EquipmentStats
           rarity={rarity}
           statRanges={equipment.statRanges}
+          name={equipment.name}
         />
       </div>
     </div>

@@ -11,7 +11,7 @@ import {
 } from "shared/types/characteristics";
 import { cn } from "shared/utils/cn";
 import { useStore } from "zustand";
-import { ActionButton } from "./action-button";
+import { ActionButton } from "shared/ui/action-button";
 import { StatsBlock } from "./stats-block";
 
 type MonsterRowProps = {
@@ -190,10 +190,10 @@ export function MonsterRow({ monster, index }: MonsterRowProps) {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <ActionButton tone="hit" label="Hit monster" onClick={handleHit} />
-            <ActionButton tone="attack" label="Attack" onClick={playAttack} />
-            <ActionButton tone="hit" label="Get Hit" onClick={playGetHit} />
-            <ActionButton tone="death" label="Death" onClick={playDeath} />
+            <ActionButton tone="sky" label="Hit monster" onClick={handleHit} />
+            <ActionButton tone="ember" label="Attack" onClick={playAttack} />
+            <ActionButton tone="sky" label="Get Hit" onClick={playGetHit} />
+            <ActionButton tone="rose" label="Death" onClick={playDeath} />
           </div>
         </div>
         <StatsBlock level={level} characteristics={monster.characteristics} />
