@@ -1,13 +1,13 @@
 import { StaticImageData } from "next/image";
 import { RarityEnum } from "shared/types/rarity";
-import armorIcon from "../assets/armor.png";
-import bootsIcon from "../assets/boots.png";
-import glovesIcon from "../assets/gloves.png";
-import helmetIcon from "../assets/helmet.png";
-import necklaceIcon from "../assets/necklace.png";
-import ringIcon from "../assets/ring.png";
-import trousersIcon from "../assets/trousers.png";
-import weaponIcon from "../assets/weapon.png";
+import armorIcon from "../assets/equipment-slots/armor.png";
+import bootsIcon from "../assets/equipment-slots/boots.png";
+import glovesIcon from "../assets/equipment-slots/gloves.png";
+import helmetIcon from "../assets/equipment-slots/helmet.png";
+import necklaceIcon from "../assets/equipment-slots/necklace.png";
+import ringIcon from "../assets/equipment-slots/ring.png";
+import trousersIcon from "../assets/equipment-slots/trousers.png";
+import weaponIcon from "../assets/equipment-slots/weapon.png";
 import {
   NAME_BY_RARITY as ANCIENT_ARMOR_NAME_BY_RARITY,
   SKIN_BY_RARITY as ANCIENT_ARMOR_SKIN_BY_RARITY,
