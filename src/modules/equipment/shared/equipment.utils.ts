@@ -1,5 +1,5 @@
 import {
-  EQUIPMENT_TYPE_ORDER,
+  EQUIPMENT_TYPE,
   type EquipmentEntry,
   type EquipmentRegistry,
   type EquipmentType,
@@ -18,7 +18,7 @@ export const groupEquipmentByType = (
   items: EquipmentEntry[],
 ): EquipmentRegistry => {
   const base = Object.fromEntries(
-    EQUIPMENT_TYPE_ORDER.map((type) => [type, [] as EquipmentEntry[]]),
+    EQUIPMENT_TYPE.map((type) => [type, [] as EquipmentEntry[]]),
   ) as EquipmentRegistry;
 
   return items.reduce<EquipmentRegistry>((acc, item) => {

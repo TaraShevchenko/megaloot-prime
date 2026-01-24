@@ -18,26 +18,25 @@ import {
   SKIN_BY_RARITY as WAND_SKIN_BY_RARITY,
   STAT_RANGES as WAND_STAT_RANGES,
 } from "modules/equipment/equipment/weapon/wand/constants";
+import armorIcon from "modules/equipment/assets/armor.png";
+import bootsIcon from "modules/equipment/assets/boots.png";
+import glovesIcon from "modules/equipment/assets/gloves.png";
+import helmetIcon from "modules/equipment/assets/helmet.png";
+import necklaceIcon from "modules/equipment/assets/necklace.png";
+import ringIcon from "modules/equipment/assets/ring.png";
+import trousersIcon from "modules/equipment/assets/trousers.png";
+import weaponIcon from "modules/equipment/assets/weapon.png";
 import { RarityEnum } from "shared/types/rarity";
 import {
   EquipmentIdEnum,
+  EQUIPMENT_TYPE,
   EquipmentTypeEnum,
   type EquipmentEntry,
   type EquipmentRegistry,
   type EquipmentType,
 } from "./equipment.types";
 import { formatEquipmentName, groupEquipmentByType } from "./equipment.utils";
-
-export const EQUIPMENT_TYPE_ORDER = [
-  "WEAPON",
-  "ARMOR",
-  "HELMET",
-  "TROUSERS",
-  "GLOVES",
-  "RING",
-  "NECKLACE",
-  "BOOTS",
-] as const;
+import type { StaticImageData } from "next/image";
 
 const weaponEquipment: EquipmentEntry[] = [
   {
@@ -87,10 +86,24 @@ export const EQUIPMENT_ITEMS: EquipmentEntry[] = [...weaponEquipment];
 export const EQUIPMENT_BY_TYPE: EquipmentRegistry =
   groupEquipmentByType(EQUIPMENT_ITEMS);
 
-export const EQUIPMENT_TYPES = EQUIPMENT_TYPE_ORDER;
+export const EQUIPMENT_TYPES = EQUIPMENT_TYPE;
 export const EQUIPMENT_TYPE_LABELS: Record<EquipmentType, string> =
   Object.fromEntries(
-    EQUIPMENT_TYPE_ORDER.map((type) => [type, formatEquipmentName(type)]),
+    EQUIPMENT_TYPE.map((type) => [type, formatEquipmentName(type)]),
   ) as Record<EquipmentType, string>;
 
 export const WEAPON_EQUIPMENT = weaponEquipment;
+
+export const EQUIPMENT_INVENTORY_META: Record<
+  EquipmentType,
+  { label: string; icon: StaticImageData }
+> = {
+  WEAPON: { label: formatEquipmentName("WEAPON"), icon: weaponIcon },
+  ARMOR: { label: formatEquipmentName("ARMOR"), icon: armorIcon },
+  HELMET: { label: formatEquipmentName("HELMET"), icon: helmetIcon },
+  TROUSERS: { label: formatEquipmentName("TROUSERS"), icon: trousersIcon },
+  GLOVES: { label: formatEquipmentName("GLOVES"), icon: glovesIcon },
+  RING: { label: formatEquipmentName("RING"), icon: ringIcon },
+  NECKLACE: { label: formatEquipmentName("NECKLACE"), icon: necklaceIcon },
+  BOOTS: { label: formatEquipmentName("BOOTS"), icon: bootsIcon },
+};

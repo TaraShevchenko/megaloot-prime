@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, type MouseEvent } from "react";
+import { useState, type DragEvent, type MouseEvent } from "react";
 import { EquipmentStats } from "modules/equipment/client";
 import { RarityEnum } from "shared/types/rarity";
+import { Popover, PopoverContent, PopoverTrigger } from "shared/ui/popover";
+import { useInventoryStore } from "../inventory.hooks";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "shared/ui/popover";
-import { useInventoryStore } from "../inventory.store";
-import type { InventorySlot } from "../inventory.types";
+  type InventoryStoreHook,
+  type InventoryStoreRegistry,
+} from "../inventory.store";
+import type { InventoryDragPayload, InventorySlot } from "../inventory.types";
 import { InventorySlotCard } from "./inventory-slot-card";
 
 const SELL_VALUES: Record<RarityEnum, number> = {
@@ -28,16 +28,44 @@ const DISENCHANT_VALUES: Record<RarityEnum, number> = {
   [RarityEnum.LEGENDARY]: 12,
 };
 
-export function InventoryUi() {
-  const slots = useInventoryStore((state) => state.slots);
-  const dragIndex = useInventoryStore((state) => state.dragIndex);
-  const hoverIndex = useInventoryStore((state) => state.hoverIndex);
-  const dragStart = useInventoryStore((state) => state.dragStart);
-  const dropOnSlot = useInventoryStore((state) => state.dropOnSlot);
-  const dragEnter = useInventoryStore((state) => state.dragEnter);
-  const dragLeave = useInventoryStore((state) => state.dragLeave);
-  const dragEnd = useInventoryStore((state) => state.dragEnd);
-  const removeItem = useInventoryStore((state) => state.removeItem);
+type InventoryUiProps = {
+  store?: InventoryStoreHook;
+  storeRegistry?: InventoryStoreRegistry;
+  gridClassName?: string;
+};
+
+const parsePayload = (
+  event: DragEvent<HTMLDivElement>,
+): InventoryDragPayload | null => {
+  const payload = event.dataTransfer.getData("application/x-inventory-item");
+  if (!payload) return null;
+  try {
+    const parsed = JSON.parse(payload) as InventoryDragPayload;
+    if (!parsed?.inventoryId || typeof parsed.index !== "number") {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+export function InventoryUi({
+  store = useInventoryStore,
+  storeRegistry,
+  gridClassName,
+}: InventoryUiProps) {
+  const slots = store((state) => state.slots);
+  const slotDefinitions = store((state) => state.slotDefinitions);
+  const inventoryId = store((state) => state.id);
+  const dragIndex = store((state) => state.dragIndex);
+  const hoverIndex = store((state) => state.hoverIndex);
+  const dragStart = store((state) => state.dragStart);
+  const dropOnSlot = store((state) => state.dropOnSlot);
+  const dragEnter = store((state) => state.dragEnter);
+  const dragLeave = store((state) => state.dragLeave);
+  const dragEnd = store((state) => state.dragEnd);
+  const removeItem = store((state) => state.removeItem);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const handleContextMenu = (
@@ -64,11 +92,57 @@ export function InventoryUi() {
     setOpenIndex(null);
   };
 
+  const handleDrop = (event: DragEvent<HTMLDivElement>, index: number) => {
+    const payload = parsePayload(event);
+    if (!payload || payload.inventoryId === inventoryId) {
+      dropOnSlot(index);
+      return;
+    }
+
+    if (!storeRegistry) {
+      dropOnSlot(index);
+      return;
+    }
+
+    const sourceStore = storeRegistry[payload.inventoryId];
+    if (!sourceStore) {
+      dropOnSlot(index);
+      return;
+    }
+
+    const sourceState = sourceStore.getState();
+    const item = sourceState.slots[payload.index];
+    if (!item) {
+      dropOnSlot(index);
+      return;
+    }
+
+    const targetState = store.getState();
+    if (targetState.slots[index] || !targetState.canPlaceItem(index, item)) {
+      store.setState({
+        notice: "Slot is occupied or restricted.",
+      });
+      dragEnd();
+      return;
+    }
+
+    if (targetState.placeItem(index, item)) {
+      sourceState.removeItem(payload.index);
+      sourceState.dragEnd();
+      dragEnd();
+    }
+  };
+
+  const gridTemplate =
+    gridClassName ?? "grid-cols-[repeat(auto-fill,80px)] justify-start";
+
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(80px,1fr))] gap-2">
+    <div className={`grid ${gridTemplate}`}>
       {slots.map((slot, index) => {
         const slotCardProps = {
           slot,
+          slotDefinition: slotDefinitions[index],
+          inventoryId,
           index,
           isActive: dragIndex === index,
           isHover: hoverIndex === index,
@@ -76,9 +150,9 @@ export function InventoryUi() {
             setOpenIndex(null);
             dragStart(index);
           },
-          onDrop: () => {
+          onDrop: (event: DragEvent<HTMLDivElement>) => {
             setOpenIndex(null);
-            dropOnSlot(index);
+            handleDrop(event, index);
           },
           onDragEnter: () => dragEnter(index),
           onDragLeave: dragLeave,
@@ -91,19 +165,24 @@ export function InventoryUi() {
         };
 
         if (!slot) {
-          return <InventorySlotCard key={index} {...slotCardProps} />;
+          return (
+            <InventorySlotCard
+              key={slotDefinitions[index]?.id ?? index}
+              {...slotCardProps}
+            />
+          );
         }
 
         return (
           <Popover
-            key={index}
+            key={slotDefinitions[index]?.id ?? index}
             open={openIndex === index}
             onOpenChange={(open) => handleOpenChange(index, open)}
           >
             <PopoverTrigger asChild>
               <button
                 type="button"
-                className="inline-flex w-full rounded-2xl bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f1622]"
+                className="inline-flex w-full select-none rounded-2xl bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f1622]"
                 aria-label={`View stat ranges for ${slot.name}`}
               >
                 <InventorySlotCard {...slotCardProps} />

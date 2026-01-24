@@ -3,4 +3,5 @@ export type {
   InventoryType,
   InventoryItem,
   InventorySlot,
+  InventorySlotDefinition,
 } from "./shared/inventory.types";

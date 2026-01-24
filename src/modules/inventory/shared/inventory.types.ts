@@ -1,5 +1,5 @@
 import { StaticImageData } from "next/image";
-import { Equipment } from "modules/equipment";
+import { type Equipment, type EquipmentType } from "modules/equipment";
 import { CharacteristicsEnum } from "shared/types/characteristics";
 
 export type InventoryItem = Equipment & {
@@ -10,7 +10,19 @@ export type InventoryItem = Equipment & {
 
 export type InventorySlot = InventoryItem | undefined;
 
+export type InventorySlotDefinition = {
+  id: string;
+  allowedTypes?: EquipmentType[];
+  label?: string;
+  icon?: StaticImageData;
+};
+
+export type InventoryDragPayload = {
+  inventoryId: string;
+  index: number;
+};
+
 export type InventoryType = {
   slots: InventorySlot[];
-  slotsAmount: number;
+  slotDefinitions: InventorySlotDefinition[];
 };

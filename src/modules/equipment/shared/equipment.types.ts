@@ -3,7 +3,7 @@ import { CharacteristicsEnum } from "shared/types/characteristics";
 import { RarityEnum } from "shared/types/rarity";
 import { z } from "zod";
 
-export const EQUIPMENT_TYPE_ORDER = [
+export const EQUIPMENT_TYPE = [
   "WEAPON",
   "ARMOR",
   "HELMET",
@@ -22,7 +22,7 @@ export const EQUIPMENT_IDS = [
   "AXE",
 ] as const;
 
-export const EquipmentTypeEnumSchema = z.enum(EQUIPMENT_TYPE_ORDER);
+export const EquipmentTypeEnumSchema = z.enum(EQUIPMENT_TYPE);
 export type EquipmentType = z.infer<typeof EquipmentTypeEnumSchema>;
 export const EquipmentTypeEnum = EquipmentTypeEnumSchema.enum;
 
