@@ -17,6 +17,7 @@ type InventoryState = {
   addSlot: () => void;
   addItem: (item: InventoryItem) => void;
   addRandomItem: () => void;
+  removeItem: (index: number) => void;
   dragStart: (index: number) => void;
   dropOnSlot: (targetIndex: number) => void;
   dragEnter: (index: number) => void;
@@ -50,6 +51,23 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
   },
   addRandomItem: () => {
     get().addItem(createRandomInventoryItem());
+  },
+  removeItem: (index) => {
+    set((state) => {
+      if (!state.slots[index]) {
+        return { notice: null };
+      }
+
+      const updated = [...state.slots];
+      updated[index] = undefined;
+
+      return {
+        slots: updated,
+        dragIndex: state.dragIndex === index ? null : state.dragIndex,
+        hoverIndex: state.hoverIndex === index ? null : state.hoverIndex,
+        notice: null,
+      };
+    });
   },
   dragStart: (index) => {
     if (!get().slots[index]) return;
