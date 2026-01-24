@@ -5,7 +5,7 @@ import {
   type CharacteristicsEnum,
 } from "shared/types/characteristics";
 import { RARITY_ORDER, RarityEnum } from "shared/types/rarity";
-import type { InventoryItem } from "./types";
+import type { InventoryItem } from "./inventory.types";
 
 const rarityWeights: Record<RarityEnum, number> = {
   [RarityEnum.COMMON]: 48,

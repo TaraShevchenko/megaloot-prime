@@ -1,3 +1,6 @@
-export { InventoryShowcase } from "./components/inventory-showcase";
-export { createRandomInventoryItem } from "./utils";
-export type { Inventory, InventoryItem, InventorySlot } from "./types";
+export { createRandomInventoryItem } from "./shared/inventory.utils";
+export type {
+  InventoryType,
+  InventoryItem,
+  InventorySlot,
+} from "./shared/inventory.types";

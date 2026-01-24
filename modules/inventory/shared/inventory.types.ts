@@ -10,7 +10,7 @@ export type InventoryItem = Equipment & {
 
 export type InventorySlot = InventoryItem | undefined;
 
-export type Inventory = {
+export type InventoryType = {
   slots: InventorySlot[];
   slotsAmount: number;
 };

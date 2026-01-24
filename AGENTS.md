@@ -25,6 +25,14 @@ Use npm scripts in `package.json`:
 - Route files are convention-based (`page.tsx`, `layout.tsx`).
 - Use path aliases from `tsconfig.json` (`app/*`, `modules/*`, `shared/*`) instead of deep relative imports when it improves clarity.
 
+## Module Rules (Based on monsters/equipment/inventory)
+- Keep module logic in `modules/<module-name>/` and route UI in `app/<module-name>/`; prefer server components for pages and isolate `"use client"` to the smallest component (e.g., a panel).
+- Put cross-usage logic in `modules/<module-name>/shared/` (types, utils, data, stores, UI pieces used by multiple routes).
+- Public API: `modules/<module-name>/index.ts` is server-safe and re-exports from `shared/` only (types, utils, data).
+- Client API: `modules/<module-name>/client.ts` is `"use client";` and re-exports client-safe UI, hooks, and stores from `shared/`.
+- Zustand stores live in `modules/<module-name>/shared/*store*.ts` and are exported through `client.ts`; access actions/state via `useInventoryStore((state) => state.someAction)` style selectors to avoid SSR warnings.
+- If a module needs a demo/showcase UI, place it in `app/<module-name>/components/` with kebab-case filenames and import module APIs via `modules/<module-name>/client`.
+
 ## Monsters Module
 - Monster folders live in `modules/monsters/monsters/<monster-id>` using kebab-case and contain `assets/attack.png`, `assets/idle.png`, `assets/get-hit.png`, `assets/death.png`; keep sprite sheets horizontal with `sheetWidth` matching `frameSize * frames` and set `FRAME_SIZE`/`FRAME_DURATION_MS` constants in `constants.ts`.
 - Each monster exports a `constants.ts` with `ANIMATION_CONFIG` (`MonsterAnimationConfig`) and `CHARACTERISTICS` (`CharacteristicsEnum`/`Characteristics` from `shared/characteristics`), and an `index.tsx` that is `"use client";` and uses `createMonsterAnimation(ANIMATION_CONFIG)` to export `default MonsterAnimation` plus `useMonsterAnimation`.
