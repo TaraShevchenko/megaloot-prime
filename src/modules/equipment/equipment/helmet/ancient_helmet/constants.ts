@@ -1,4 +1,3 @@
-import { StaticImageData } from "next/image";
 import { CharacteristicsEnum } from "shared/types/characteristics";
 import { RarityEnum } from "shared/types/rarity";
 import common from "./assets/common.png";
@@ -6,14 +5,26 @@ import epic from "./assets/epic.png";
 import legendary from "./assets/legendary.png";
 import rare from "./assets/rare.png";
 import uncommon from "./assets/uncommon.png";
-import { EquipmentStatRanges } from "../../../shared/equipment.types";
+import {
+  EquipmentNameMap,
+  EquipmentSkinMap,
+  EquipmentStatRanges,
+} from "../../../shared/equipment.types";
 
-export const SKIN_BY_RARITY: Record<RarityEnum, StaticImageData> = {
+export const SKIN_BY_RARITY: EquipmentSkinMap = {
   [RarityEnum.COMMON]: common,
   [RarityEnum.UNCOMMON]: uncommon,
   [RarityEnum.RARE]: rare,
   [RarityEnum.EPIC]: epic,
   [RarityEnum.LEGENDARY]: legendary,
+};
+
+export const NAME_BY_RARITY: EquipmentNameMap = {
+  [RarityEnum.COMMON]: "Helm of Twisted Branches",
+  [RarityEnum.UNCOMMON]: "Stoneplate Helm",
+  [RarityEnum.RARE]: "Ironclad Helm",
+  [RarityEnum.EPIC]: "Helm of Radiant Dawn",
+  [RarityEnum.LEGENDARY]: "Celestial Helmt",
 };
 
 export const STAT_RANGES: EquipmentStatRanges = {

@@ -38,7 +38,7 @@ export function EquipmentPreview({
               Equipment
             </p>
             <h2 className="text-xl font-semibold text-slate-100">
-              {equipment.name}
+              {equipment.name[rarity]}
             </h2>
             <p className="mt-1 text-sm text-slate-400">
               Rarity: {RARITY_LABELS[rarity]}
@@ -77,7 +77,7 @@ export function EquipmentPreview({
         <EquipmentStats
           rarity={rarity}
           statRanges={equipment.statRanges}
-          name={equipment.name}
+          name={equipment.name[rarity]}
         />
       </div>
     </div>

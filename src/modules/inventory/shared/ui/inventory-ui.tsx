@@ -197,7 +197,7 @@ export function InventoryUi({
               <EquipmentStats
                 rarity={slot.rarity}
                 statRanges={slot.statRanges}
-                name={slot.name}
+                name={slot.name[slot.rarity]}
                 sellAction={{
                   value: SELL_VALUES[slot.rarity],
                   onClick: () => handleRemove(index),

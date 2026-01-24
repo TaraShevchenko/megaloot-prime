@@ -20,11 +20,11 @@ export const SKIN_BY_RARITY: EquipmentSkinMap = {
 };
 
 export const NAME_BY_RARITY: EquipmentNameMap = {
-  [RarityEnum.COMMON]: "Oakspell Wand",
-  [RarityEnum.UNCOMMON]: "Earthshard Wand",
-  [RarityEnum.RARE]: "Grimforge Wand",
-  [RarityEnum.EPIC]: "Aurelius Wand",
-  [RarityEnum.LEGENDARY]: "Celestium Wand",
+  [RarityEnum.COMMON]: "Jacket",
+  [RarityEnum.UNCOMMON]: "Cuirass",
+  [RarityEnum.RARE]: "Steelrend Armor",
+  [RarityEnum.EPIC]: "Sunfire Armor",
+  [RarityEnum.LEGENDARY]: "Eternashard Armor",
 };
 
 export const STAT_RANGES: EquipmentStatRanges = {
