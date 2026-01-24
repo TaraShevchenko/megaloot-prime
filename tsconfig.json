@@ -22,18 +22,19 @@
     "baseUrl": ".",
     "paths": {
       "*": ["./*"],
-      "app/*": ["app/*"],
-      "modules/*": ["modules/*"],
-      "shared/*": ["shared/*"]
+      "app/*": ["src/app/*"],
+      "modules/*": ["src/modules/*"],
+      "shared/*": ["src/shared/*"]
     }
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
+    "next.config.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "src/**/*.mts"
   ],
   "exclude": ["node_modules"]
 }

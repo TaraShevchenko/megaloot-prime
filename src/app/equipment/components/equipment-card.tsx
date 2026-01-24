@@ -52,7 +52,7 @@ export function EquipmentCard({
               src={equipment.skins[rarity]}
               alt={equipment.name}
               className="h-24 w-24 object-contain drop-shadow-[0_16px_28px_rgba(0,0,0,0.45)]"
-              style={{ imageRendering: "pixelated" }}
+              // style={{ imageRendering: "pixelated" }}
             />
           </div>
 
