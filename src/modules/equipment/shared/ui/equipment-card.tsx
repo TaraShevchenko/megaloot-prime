@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { forwardRef, type ComponentPropsWithoutRef } from "react";
+import Image from "next/image";
 import type { EquipmentEntry } from "modules/equipment";
 import { RARITY_BACKGROUNDS, type RarityEnum } from "shared/types/rarity";
 import { cn } from "shared/utils/cn";
@@ -23,7 +23,7 @@ export const EquipmentCard = forwardRef<HTMLDivElement, EquipmentCardProps>(
       >
         <Image
           src={equipment.skins[rarity]}
-          alt={equipment.name}
+          alt={equipment.name[rarity]}
           className="pointer-events-none h-24 w-24 object-contain drop-shadow-[0_16px_28px_rgba(0,0,0,0.45)]"
           style={{ imageRendering: "pixelated" }}
         />

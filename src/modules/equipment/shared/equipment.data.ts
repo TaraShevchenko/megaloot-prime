@@ -1,83 +1,140 @@
+import { StaticImageData } from "next/image";
+import { RarityEnum } from "shared/types/rarity";
+import armorIcon from "../assets/armor.png";
+import bootsIcon from "../assets/boots.png";
+import glovesIcon from "../assets/gloves.png";
+import helmetIcon from "../assets/helmet.png";
+import necklaceIcon from "../assets/necklace.png";
+import ringIcon from "../assets/ring.png";
+import trousersIcon from "../assets/trousers.png";
+import weaponIcon from "../assets/weapon.png";
 import {
+  NAME_BY_RARITY as ANCIENT_ARMOR_NAME_BY_RARITY,
+  SKIN_BY_RARITY as ANCIENT_ARMOR_SKIN_BY_RARITY,
+  STAT_RANGES as ANCIENT_ARMOR_STAT_RANGES,
+} from "../equipment/armor/ancient_armor/constants";
+import {
+  NAME_BY_RARITY as ANCIENT_BOOTS_NAME_BY_RARITY,
+  SKIN_BY_RARITY as ANCIENT_BOOTS_SKIN_BY_RARITY,
+  STAT_RANGES as ANCIENT_BOOTS_STAT_RANGES,
+} from "../equipment/boots/ancient_boots/constants";
+import {
+  NAME_BY_RARITY as ANCIENT_HELMET_NAME_BY_RARITY,
+  SKIN_BY_RARITY as ANCIENT_HELMET_SKIN_BY_RARITY,
+  STAT_RANGES as ANCIENT_HELMET_STAT_RANGES,
+} from "../equipment/helmet/ancient_helmet/constants";
+import {
+  NAME_BY_RARITY as ANCIENT_TROUSERS_NAME_BY_RARITY,
+  SKIN_BY_RARITY as ANCIENT_TROUSERS_SKIN_BY_RARITY,
+  STAT_RANGES as ANCIENT_TROUSERS_STAT_RANGES,
+} from "../equipment/trousers/ancient_trousers/constants";
+import {
+  NAME_BY_RARITY as AXE_NAME_BY_RARITY,
   SKIN_BY_RARITY as AXE_SKIN_BY_RARITY,
   STAT_RANGES as AXE_STAT_RANGES,
-} from "modules/equipment/equipment/weapon/axe/constants";
+} from "../equipment/weapon/axe/constants";
 import {
-  SKIN_BY_RARITY as BRAID_SKIN_BY_RARITY,
-  STAT_RANGES as BRAID_STAT_RANGES,
-} from "modules/equipment/equipment/weapon/braid/constants";
-import {
+  NAME_BY_RARITY as HAMMER_NAME_BY_RARITY,
   SKIN_BY_RARITY as HAMMER_SKIN_BY_RARITY,
   STAT_RANGES as HAMMER_STAT_RANGES,
-} from "modules/equipment/equipment/weapon/hammer/constants";
+} from "../equipment/weapon/hammer/constants";
 import {
+  NAME_BY_RARITY as SCYTHE_NAME_BY_RARITY,
+  SKIN_BY_RARITY as SCYTHE_SKIN_BY_RARITY,
+  STAT_RANGES as SCYTHE_STAT_RANGES,
+} from "../equipment/weapon/scythe/constants";
+import {
+  NAME_BY_RARITY as SWORD_NAME_BY_RARITY,
   SKIN_BY_RARITY as SWORD_SKIN_BY_RARITY,
   STAT_RANGES as SWORD_STAT_RANGES,
-} from "modules/equipment/equipment/weapon/sword/constants";
+} from "../equipment/weapon/sword/constants";
 import {
+  NAME_BY_RARITY as WAND_NAME_BY_RARITY,
   SKIN_BY_RARITY as WAND_SKIN_BY_RARITY,
   STAT_RANGES as WAND_STAT_RANGES,
-} from "modules/equipment/equipment/weapon/wand/constants";
-import armorIcon from "modules/equipment/assets/armor.png";
-import bootsIcon from "modules/equipment/assets/boots.png";
-import glovesIcon from "modules/equipment/assets/gloves.png";
-import helmetIcon from "modules/equipment/assets/helmet.png";
-import necklaceIcon from "modules/equipment/assets/necklace.png";
-import ringIcon from "modules/equipment/assets/ring.png";
-import trousersIcon from "modules/equipment/assets/trousers.png";
-import weaponIcon from "modules/equipment/assets/weapon.png";
-import { RarityEnum } from "shared/types/rarity";
+} from "../equipment/weapon/wand/constants";
 import {
-  EquipmentIdEnum,
   EQUIPMENT_TYPE,
-  EquipmentTypeEnum,
   type EquipmentEntry,
+  EquipmentIdEnum,
   type EquipmentRegistry,
-  type EquipmentType,
+  EquipmentType,
+  EquipmentTypeEnum,
 } from "./equipment.types";
 import { formatEquipmentName, groupEquipmentByType } from "./equipment.utils";
-import type { StaticImageData } from "next/image";
 
 const weaponEquipment: EquipmentEntry[] = [
   {
-    id: EquipmentIdEnum.SWORD,
+    id: EquipmentIdEnum.AXE,
     type: EquipmentTypeEnum.WEAPON,
-    name: formatEquipmentName(EquipmentIdEnum.SWORD),
-    skins: SWORD_SKIN_BY_RARITY,
+    name: AXE_NAME_BY_RARITY,
+    skins: AXE_SKIN_BY_RARITY,
     defaultRarity: RarityEnum.COMMON,
-    statRanges: SWORD_STAT_RANGES,
+    statRanges: AXE_STAT_RANGES,
+  },
+  {
+    id: EquipmentIdEnum.SCYTHE,
+    type: EquipmentTypeEnum.WEAPON,
+    name: SCYTHE_NAME_BY_RARITY,
+    skins: SCYTHE_SKIN_BY_RARITY,
+    defaultRarity: RarityEnum.COMMON,
+    statRanges: SCYTHE_STAT_RANGES,
   },
   {
     id: EquipmentIdEnum.HAMMER,
     type: EquipmentTypeEnum.WEAPON,
-    name: formatEquipmentName(EquipmentIdEnum.HAMMER),
+    name: HAMMER_NAME_BY_RARITY,
     skins: HAMMER_SKIN_BY_RARITY,
     defaultRarity: RarityEnum.COMMON,
     statRanges: HAMMER_STAT_RANGES,
   },
   {
-    id: EquipmentIdEnum.BRAID,
+    id: EquipmentIdEnum.SWORD,
     type: EquipmentTypeEnum.WEAPON,
-    name: formatEquipmentName(EquipmentIdEnum.BRAID),
-    skins: BRAID_SKIN_BY_RARITY,
+    name: SWORD_NAME_BY_RARITY,
+    skins: SWORD_SKIN_BY_RARITY,
     defaultRarity: RarityEnum.COMMON,
-    statRanges: BRAID_STAT_RANGES,
+    statRanges: SWORD_STAT_RANGES,
   },
   {
     id: EquipmentIdEnum.WAND,
     type: EquipmentTypeEnum.WEAPON,
-    name: formatEquipmentName(EquipmentIdEnum.WAND),
+    name: WAND_NAME_BY_RARITY,
     skins: WAND_SKIN_BY_RARITY,
     defaultRarity: RarityEnum.COMMON,
     statRanges: WAND_STAT_RANGES,
   },
   {
-    id: EquipmentIdEnum.AXE,
+    id: EquipmentIdEnum.ANCIENT_ARMOR,
     type: EquipmentTypeEnum.WEAPON,
-    name: formatEquipmentName(EquipmentIdEnum.AXE),
-    skins: AXE_SKIN_BY_RARITY,
+    name: ANCIENT_ARMOR_NAME_BY_RARITY,
+    skins: ANCIENT_ARMOR_SKIN_BY_RARITY,
     defaultRarity: RarityEnum.COMMON,
-    statRanges: AXE_STAT_RANGES,
+    statRanges: ANCIENT_ARMOR_STAT_RANGES,
+  },
+  {
+    id: EquipmentIdEnum.ANCIENT_BOOTS,
+    type: EquipmentTypeEnum.WEAPON,
+    name: ANCIENT_BOOTS_NAME_BY_RARITY,
+    skins: ANCIENT_BOOTS_SKIN_BY_RARITY,
+    defaultRarity: RarityEnum.COMMON,
+    statRanges: ANCIENT_BOOTS_STAT_RANGES,
+  },
+  {
+    id: EquipmentIdEnum.ANCIENT_TROUSERS,
+    type: EquipmentTypeEnum.WEAPON,
+    name: ANCIENT_TROUSERS_NAME_BY_RARITY,
+    skins: ANCIENT_TROUSERS_SKIN_BY_RARITY,
+    defaultRarity: RarityEnum.COMMON,
+    statRanges: ANCIENT_TROUSERS_STAT_RANGES,
+  },
+  {
+    id: EquipmentIdEnum.ANCIENT_HELMET,
+    type: EquipmentTypeEnum.WEAPON,
+    name: ANCIENT_HELMET_NAME_BY_RARITY,
+    skins: ANCIENT_HELMET_SKIN_BY_RARITY,
+    defaultRarity: RarityEnum.COMMON,
+    statRanges: ANCIENT_HELMET_STAT_RANGES,
   },
 ];
 

@@ -36,7 +36,7 @@ export function InventoryItemCard({
           <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-black/35 shadow-[0_12px_32px_rgba(0,0,0,0.4)]">
             <Image
               src={item.skin}
-              alt={item.name}
+              alt={item.name[item.rarity]}
               className="h-12 w-12 object-contain drop-shadow-[0_14px_28px_rgba(0,0,0,0.45)]"
               style={{ imageRendering: "pixelated" }}
             />
