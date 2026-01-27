@@ -29,18 +29,23 @@ export const NAME_BY_RARITY: EquipmentNameMap = {
 
 export const STAT_RANGES: EquipmentStatRanges = {
   [RarityEnum.COMMON]: {
-    [CharacteristicsEnum.PHYS_ATK]: [14, 34],
+    [CharacteristicsEnum.HP]: [25, 40],
+    [CharacteristicsEnum.PHYS_DEF]: [3, 6],
   },
   [RarityEnum.UNCOMMON]: {
-    [CharacteristicsEnum.PHYS_ATK]: [15, 25],
+    [CharacteristicsEnum.HP]: [40, 55],
+    [CharacteristicsEnum.PHYS_DEF]: [6, 9],
   },
   [RarityEnum.RARE]: {
-    [CharacteristicsEnum.PHYS_ATK]: [20, 30],
+    [CharacteristicsEnum.HP]: [55, 75],
+    [CharacteristicsEnum.PHYS_DEF]: [9, 12],
   },
   [RarityEnum.EPIC]: {
-    [CharacteristicsEnum.PHYS_ATK]: [25, 35],
+    [CharacteristicsEnum.HP]: [75, 100],
+    [CharacteristicsEnum.PHYS_DEF]: [12, 16],
   },
   [RarityEnum.LEGENDARY]: {
-    [CharacteristicsEnum.PHYS_ATK]: [30, 40],
+    [CharacteristicsEnum.HP]: [100, 135],
+    [CharacteristicsEnum.PHYS_DEF]: [16, 21],
   },
 };

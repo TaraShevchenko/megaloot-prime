@@ -12,6 +12,7 @@ import {
 import { cn } from "shared/utils/cn";
 import { useStore } from "zustand";
 import { ActionButton } from "shared/ui/action-button";
+import { NumberStepper } from "shared/ui/number-stepper";
 import { StatsBlock } from "./stats-block";
 
 type MonsterRowProps = {
@@ -123,35 +124,16 @@ export function MonsterRow({ monster, index }: MonsterRowProps) {
             </h2>
             <div className="flex justify-beetwen">
               <p className="mt-1 text-sm text-slate-400">Level {level}</p>
-              <div className="flex items-center gap-2 sm:ml-auto">
-                <button
-                  type="button"
-                  onClick={() => applyLevel(level - 1)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-500/60 text-xs font-semibold text-slate-200 transition hover:border-slate-300/80"
-                  aria-label="Decrease level"
-                >
-                  -
-                </button>
-                <input
-                  type="text"
+              <div className="sm:ml-auto">
+                <NumberStepper
+                  value={level}
+                  onChange={applyLevel}
                   min={1}
                   step={1}
-                  value={level}
-                  onChange={(event) => {
-                    const nextLevel = Number(event.currentTarget.value);
-                    applyLevel(nextLevel);
-                  }}
-                  className="h-8 w-16 rounded-full border border-slate-500/60 bg-transparent text-center text-sm font-semibold text-slate-100 outline-none transition focus:border-amber-200/80"
-                  aria-label="Monster level"
+                  decrementAriaLabel="Decrease level"
+                  incrementAriaLabel="Increase level"
+                  inputAriaLabel="Monster level"
                 />
-                <button
-                  type="button"
-                  onClick={() => applyLevel(level + 1)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-500/60 text-xs font-semibold text-slate-200 transition hover:border-slate-300/80"
-                  aria-label="Increase level"
-                >
-                  +
-                </button>
               </div>
             </div>
             <div className="mt-4 flex items-center gap-3">

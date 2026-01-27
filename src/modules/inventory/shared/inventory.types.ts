@@ -4,7 +4,10 @@ import { CharacteristicsEnum } from "shared/types/characteristics";
 
 export type InventoryItem = Equipment & {
   instanceId: string;
+  stackKey: string;
+  stackCount?: number;
   rolledStats: Partial<Record<CharacteristicsEnum, number>>;
+  rolledStatSlots?: Array<{ stat: CharacteristicsEnum; value: number } | null>;
   skin: StaticImageData;
 };
 
@@ -15,6 +18,7 @@ export type InventorySlotDefinition = {
   allowedTypes?: EquipmentType[];
   label?: string;
   icon?: StaticImageData;
+  maxStack?: number;
 };
 
 export type InventoryDragPayload = {

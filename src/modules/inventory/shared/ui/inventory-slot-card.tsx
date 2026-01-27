@@ -18,6 +18,7 @@ type InventorySlotCardProps = {
   index: number;
   isActive: boolean;
   isHover: boolean;
+  variant?: "default" | "large";
   onDragStart: () => void;
   onDrop: (event: DragEvent<HTMLDivElement>) => void;
   onDragEnter: () => void;
@@ -60,6 +61,7 @@ export function InventorySlotCard({
   index,
   isActive,
   isHover,
+  variant = "default",
   onDragStart,
   onDrop,
   onDragEnter,
@@ -67,13 +69,16 @@ export function InventorySlotCard({
   onDragEnd,
   onContextMenu,
 }: InventorySlotCardProps) {
+  const stackCount = slot?.stackCount ?? 1;
+  const isLarge = variant === "large";
+
   return (
     <div
       role="listitem"
       aria-label={
         slot ? `${slot.name} slot` : `${slotDefinition.label} slot ${index + 1}`
       }
-      className="aspect-square p-1"
+      className={cn("aspect-square p-1", isLarge && "p-2")}
       onDrop={(event) => {
         event.preventDefault();
         onDrop(event);
@@ -114,10 +119,16 @@ export function InventorySlotCard({
             className="flex h-full select-none items-center justify-center cursor-grab active:cursor-grabbing"
           >
             <EquipmentCard
-              className="size-full"
+              className={cn("size-full", isLarge && "rounded-3xl p-8")}
               equipment={getEquipmentEntry(slot)}
               rarity={slot.rarity}
+              imageClassName={isLarge ? "h-40 w-40" : undefined}
             />
+            {stackCount > 1 ? (
+              <div className="pointer-events-none absolute bottom-1 right-1 rounded-md bg-black/70 px-1.5 py-0.5 text-[10px] font-semibold text-slate-50">
+                {stackCount}
+              </div>
+            ) : null}
           </div>
         ) : (
           <div className="flex h-full w-full select-none flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/10 bg-white/5 p-2 text-center text-[10px] uppercase tracking-[0.3em] text-slate-500">
@@ -125,7 +136,7 @@ export function InventorySlotCard({
               <Image
                 src={slotDefinition.icon}
                 alt={slotDefinition.label ?? ""}
-                className="h-12 w-12 opacity-70 pointer-events-none"
+                className="h-12 w-12 pointer-events-none brightness-50 saturate-0 opacity-40"
                 style={{ imageRendering: "pixelated" }}
               />
             )}

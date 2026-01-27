@@ -6,6 +6,7 @@ import type { EquipmentEntry } from "modules/equipment";
 import {
   CHARACTERISTIC_LABELS,
   CHARACTERISTICS_ORDER,
+  type CharacteristicsEnum,
 } from "shared/types/characteristics";
 import {
   RARITY_BACKGROUNDS,
@@ -24,7 +25,8 @@ type EquipmentStatsAction = {
 
 type EquipmentStatsProps = {
   rarity: RarityEnum;
-  statRanges: EquipmentEntry["statRanges"];
+  statRanges?: EquipmentEntry["statRanges"];
+  stats?: Partial<Record<CharacteristicsEnum, number>>;
   name?: string;
   sellAction?: EquipmentStatsAction;
   disenchantAction?: EquipmentStatsAction;
@@ -35,17 +37,26 @@ type EquipmentStatsProps = {
 export function EquipmentStats({
   rarity,
   statRanges,
+  stats,
   name,
   sellAction,
   disenchantAction,
   className,
   footer,
 }: EquipmentStatsProps) {
-  const statsForRarity = statRanges[rarity] ?? {};
-  const statsOrder = CHARACTERISTICS_ORDER.filter(
-    (stat) => statsForRarity[stat],
+  const hasRolledStats = Boolean(stats);
+  const rolledOrder = hasRolledStats
+    ? CHARACTERISTICS_ORDER.filter((stat) => typeof stats?.[stat] === "number")
+    : [];
+
+  const rangesForRarity = statRanges?.[rarity] ?? {};
+  const rangesOrder = CHARACTERISTICS_ORDER.filter(
+    (stat) => rangesForRarity[stat],
   );
-  const hasStats = statsOrder.length > 0;
+
+  const hasStats = hasRolledStats
+    ? rolledOrder.length > 0
+    : rangesOrder.length > 0;
   const hasActions = Boolean(sellAction || disenchantAction);
 
   return (
@@ -85,20 +96,22 @@ export function EquipmentStats({
         </div>
         <div className="flex justify-between">
           {hasStats ? (
-            statsOrder.map((stat) => {
-              const range = statsForRarity[stat];
-              if (!range) {
-                return null;
-              }
+            (hasRolledStats ? rolledOrder : rangesOrder).map((stat) => {
+              const value = stats?.[stat];
+              const range = rangesForRarity[stat];
 
-              const [min, max] = range;
+              if (!hasRolledStats && !range) return null;
+              if (hasRolledStats && typeof value !== "number") return null;
+
               return (
                 <div key={stat} className="contents">
                   <span className="text-base text-slate-100">
                     {CHARACTERISTIC_LABELS[stat]}
                   </span>
                   <span className="font-mono text-base text-emerald-200">
-                    {min} - {max}
+                    {hasRolledStats && typeof value === "number"
+                      ? value
+                      : `${range?.[0]} - ${range?.[1]}`}
                   </span>
                 </div>
               );

@@ -66,6 +66,7 @@ export function InventoryUi({
   const dragLeave = store((state) => state.dragLeave);
   const dragEnd = store((state) => state.dragEnd);
   const removeItem = store((state) => state.removeItem);
+  const removeItemStack = store((state) => state.removeItemStack);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const handleContextMenu = (
@@ -118,19 +119,82 @@ export function InventoryUi({
     }
 
     const targetState = store.getState();
-    if (targetState.slots[index] || !targetState.canPlaceItem(index, item)) {
-      store.setState({
-        notice: "Slot is occupied or restricted.",
-      });
+    if (!targetState.canPlaceItem(index, item)) {
+      store.setState({ notice: "Slot is restricted." });
       dragEnd();
       return;
     }
 
-    if (targetState.placeItem(index, item)) {
-      sourceState.removeItem(payload.index);
+    const taken = sourceState.takeItem(payload.index);
+    if (!taken) {
+      dragEnd();
+      return;
+    }
+
+    const targetItem = targetState.slots[index];
+
+    if (targetState.placeItem(index, taken)) {
       sourceState.dragEnd();
       dragEnd();
+      return;
     }
+
+    if (targetItem) {
+      const stackLimit = Math.max(1, slotDefinitions[index]?.maxStack ?? 1);
+      const stackable =
+        stackLimit > 1 &&
+        !!targetItem.stackKey &&
+        !!taken.stackKey &&
+        targetItem.stackKey === taken.stackKey;
+
+      if (stackable) {
+        sourceState.placeItem(payload.index, taken);
+        sourceState.dragEnd();
+        dragEnd();
+        return;
+      }
+
+      const canSwapBack = sourceState.canPlaceItem(payload.index, targetItem);
+      if (!canSwapBack) {
+        sourceState.placeItem(payload.index, taken);
+        sourceState.dragEnd();
+        dragEnd();
+        return;
+      }
+
+      const swappedOut = targetState.takeItem(index);
+      if (!swappedOut) {
+        sourceState.placeItem(payload.index, taken);
+        sourceState.dragEnd();
+        dragEnd();
+        return;
+      }
+
+      if (!sourceState.placeItem(payload.index, swappedOut)) {
+        targetState.placeItem(index, swappedOut);
+        sourceState.placeItem(payload.index, taken);
+        sourceState.dragEnd();
+        dragEnd();
+        return;
+      }
+
+      if (targetState.placeItem(index, taken)) {
+        sourceState.dragEnd();
+        dragEnd();
+        return;
+      }
+
+      sourceState.takeItem(payload.index);
+      sourceState.placeItem(payload.index, taken);
+      targetState.placeItem(index, swappedOut);
+      sourceState.dragEnd();
+      dragEnd();
+      return;
+    }
+
+    sourceState.placeItem(payload.index, taken);
+    sourceState.dragEnd();
+    dragEnd();
   };
 
   const gridTemplate =
@@ -183,7 +247,7 @@ export function InventoryUi({
               <button
                 type="button"
                 className="inline-flex w-full select-none rounded-2xl bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f1622]"
-                aria-label={`View stat ranges for ${slot.name}`}
+                aria-label={`View stats for ${slot.name}`}
               >
                 <InventorySlotCard {...slotCardProps} />
               </button>
@@ -197,6 +261,7 @@ export function InventoryUi({
               <EquipmentStats
                 rarity={slot.rarity}
                 statRanges={slot.statRanges}
+                stats={slot.rolledStats}
                 name={slot.name[slot.rarity]}
                 sellAction={{
                   value: SELL_VALUES[slot.rarity],
@@ -204,7 +269,10 @@ export function InventoryUi({
                 }}
                 disenchantAction={{
                   value: DISENCHANT_VALUES[slot.rarity],
-                  onClick: () => handleRemove(index),
+                  onClick: () => {
+                    removeItemStack(index);
+                    setOpenIndex(null);
+                  },
                 }}
               />
             </PopoverContent>

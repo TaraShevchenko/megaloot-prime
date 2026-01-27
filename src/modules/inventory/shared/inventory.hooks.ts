@@ -36,3 +36,10 @@ export const useCharacterInventoryStore = createInventoryStore({
     icon: EQUIPMENT_INVENTORY_META[type].icon,
   })),
 });
+
+export const CRAFT_ITEM_SLOT_INDEX = 0;
+
+export const useCraftInventoryStore = createInventoryStore({
+  id: "craft",
+  slotDefinitions: [{ id: "forge-item", label: "Item" }],
+});

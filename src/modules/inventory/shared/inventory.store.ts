@@ -23,6 +23,14 @@ const isItemAllowed = (
   return definition.allowedTypes.includes(item.type);
 };
 
+const getStackLimit = (definition?: InventorySlotDefinition) =>
+  Math.max(1, definition?.maxStack ?? 1);
+
+const getStackCount = (item: InventoryItem) => Math.max(1, item.stackCount ?? 1);
+
+const canStackTogether = (a: InventoryItem, b: InventoryItem) =>
+  a.stackKey && b.stackKey && a.stackKey === b.stackKey;
+
 export type InventoryState = {
   id: string;
   slots: InventorySlot[];
@@ -34,6 +42,7 @@ export type InventoryState = {
   addItem: (item: InventoryItem) => void;
   addRandomItem: () => void;
   removeItem: (index: number) => void;
+  removeItemStack: (index: number) => void;
   takeItem: (index: number) => InventoryItem | null;
   placeItem: (index: number, item: InventoryItem) => boolean;
   canPlaceItem: (index: number, item: InventoryItem) => boolean;
@@ -50,6 +59,7 @@ export type InventoryStoreRegistry = Record<string, InventoryStoreHook>;
 export const createInventoryStore = (config: {
   id: string;
   slotDefinitions: InventorySlotDefinition[];
+  canPlaceItem?: (index: number, item: InventoryItem) => boolean;
 }): InventoryStoreHook =>
   create<InventoryState>((set, get) => ({
     id: config.id,
@@ -76,15 +86,39 @@ export const createInventoryStore = (config: {
     },
     addItem: (item) => {
       set((state) => {
-        const emptyIndex = state.slots.findIndex(
-          (slot, index) =>
-            !slot && isItemAllowed(state.slotDefinitions[index], item),
-        );
-        if (emptyIndex === -1) {
-          return { notice: "No free compatible slots!" };
-        }
+        const canAccept = (index: number, nextItem: InventoryItem) => {
+          const definition = state.slotDefinitions[index];
+          if (!isItemAllowed(definition, nextItem)) return false;
+          return config.canPlaceItem ? config.canPlaceItem(index, nextItem) : true;
+        };
+
+        const addToExistingIndex = state.slots.findIndex((slot, index) => {
+          if (!slot) return false;
+          const limit = getStackLimit(state.slotDefinitions[index]);
+          if (limit <= 1) return false;
+          if (!canAccept(index, slot)) return false;
+          if (!canStackTogether(slot, item)) return false;
+          return getStackCount(slot) + getStackCount(item) <= limit;
+        });
 
         const nextSlots = [...state.slots];
+
+        if (addToExistingIndex !== -1) {
+          const current = nextSlots[addToExistingIndex];
+          if (current) {
+            nextSlots[addToExistingIndex] = {
+              ...current,
+              stackCount: getStackCount(current) + getStackCount(item),
+            };
+            return { slots: nextSlots, notice: null };
+          }
+        }
+
+        const emptyIndex = state.slots.findIndex(
+          (slot, index) => !slot && canAccept(index, item),
+        );
+        if (emptyIndex === -1) return { notice: "No free compatible slots!" };
+
         nextSlots[emptyIndex] = item;
 
         return { slots: nextSlots, notice: null };
@@ -95,9 +129,24 @@ export const createInventoryStore = (config: {
     },
     removeItem: (index) => {
       set((state) => {
-        if (!state.slots[index]) {
-          return { notice: null };
-        }
+        const current = state.slots[index];
+        if (!current) return { notice: null };
+
+        const updated = [...state.slots];
+        const nextCount = getStackCount(current) - 1;
+        updated[index] = nextCount > 0 ? { ...current, stackCount: nextCount } : undefined;
+
+        return {
+          slots: updated,
+          dragIndex: state.dragIndex === index ? null : state.dragIndex,
+          hoverIndex: state.hoverIndex === index ? null : state.hoverIndex,
+          notice: null,
+        };
+      });
+    },
+    removeItemStack: (index) => {
+      set((state) => {
+        if (!state.slots[index]) return { notice: null };
 
         const updated = [...state.slots];
         updated[index] = undefined;
@@ -113,7 +162,7 @@ export const createInventoryStore = (config: {
     takeItem: (index) => {
       const current = get().slots[index];
       if (!current) return null;
-      get().removeItem(index);
+      get().removeItemStack(index);
       return current;
     },
     placeItem: (index, item) => {
@@ -126,9 +175,28 @@ export const createInventoryStore = (config: {
         return false;
       }
 
-      if (get().slots[index]) {
-        set({ notice: "Slot is already occupied." });
-        return false;
+      const current = get().slots[index];
+      if (current) {
+        const limit = getStackLimit(get().slotDefinitions[index]);
+        if (limit <= 1 || !canStackTogether(current, item)) {
+          set({ notice: "Slot is already occupied." });
+          return false;
+        }
+
+        const incomingCount = getStackCount(item);
+        const nextCount = getStackCount(current) + incomingCount;
+        if (nextCount > limit) {
+          set({ notice: "Stack limit reached." });
+          return false;
+        }
+
+        set((state) => {
+          const nextSlots = [...state.slots];
+          nextSlots[index] = { ...current, stackCount: nextCount };
+          return { slots: nextSlots, notice: null };
+        });
+
+        return true;
       }
 
       set((state) => {
@@ -139,8 +207,10 @@ export const createInventoryStore = (config: {
 
       return true;
     },
-    canPlaceItem: (index, item) =>
-      isItemAllowed(get().slotDefinitions[index], item),
+    canPlaceItem: (index, item) => {
+      if (!isItemAllowed(get().slotDefinitions[index], item)) return false;
+      return config.canPlaceItem ? config.canPlaceItem(index, item) : true;
+    },
     dragStart: (index) => {
       if (!get().slots[index]) return;
       set({ dragIndex: index, notice: null });
@@ -153,19 +223,22 @@ export const createInventoryStore = (config: {
       }
 
       set((state) => {
+        const isPlaceable = (index: number, item: InventoryItem) => {
+          const definition = state.slotDefinitions[index];
+          if (!isItemAllowed(definition, item)) return false;
+          return config.canPlaceItem ? config.canPlaceItem(index, item) : true;
+        };
+
         const sourceItem = state.slots[dragIndex];
         if (!sourceItem) {
           return { dragIndex: null, hoverIndex: null };
         }
 
         const targetItem = state.slots[targetIndex];
-        const targetAllowed = isItemAllowed(
-          state.slotDefinitions[targetIndex],
-          sourceItem,
-        );
+        const targetAllowed = isPlaceable(targetIndex, sourceItem);
         const sourceAllowed =
           !targetItem ||
-          isItemAllowed(state.slotDefinitions[dragIndex], targetItem);
+          isPlaceable(dragIndex, targetItem);
 
         if (!targetAllowed || !sourceAllowed) {
           return {

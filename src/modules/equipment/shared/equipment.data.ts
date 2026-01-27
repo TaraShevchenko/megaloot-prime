@@ -106,7 +106,7 @@ const weaponEquipment: EquipmentEntry[] = [
   },
   {
     id: EquipmentIdEnum.ANCIENT_ARMOR,
-    type: EquipmentTypeEnum.WEAPON,
+    type: EquipmentTypeEnum.ARMOR,
     name: ANCIENT_ARMOR_NAME_BY_RARITY,
     skins: ANCIENT_ARMOR_SKIN_BY_RARITY,
     defaultRarity: RarityEnum.COMMON,
@@ -114,7 +114,7 @@ const weaponEquipment: EquipmentEntry[] = [
   },
   {
     id: EquipmentIdEnum.ANCIENT_BOOTS,
-    type: EquipmentTypeEnum.WEAPON,
+    type: EquipmentTypeEnum.BOOTS,
     name: ANCIENT_BOOTS_NAME_BY_RARITY,
     skins: ANCIENT_BOOTS_SKIN_BY_RARITY,
     defaultRarity: RarityEnum.COMMON,
@@ -122,7 +122,7 @@ const weaponEquipment: EquipmentEntry[] = [
   },
   {
     id: EquipmentIdEnum.ANCIENT_TROUSERS,
-    type: EquipmentTypeEnum.WEAPON,
+    type: EquipmentTypeEnum.TROUSERS,
     name: ANCIENT_TROUSERS_NAME_BY_RARITY,
     skins: ANCIENT_TROUSERS_SKIN_BY_RARITY,
     defaultRarity: RarityEnum.COMMON,
@@ -130,7 +130,7 @@ const weaponEquipment: EquipmentEntry[] = [
   },
   {
     id: EquipmentIdEnum.ANCIENT_HELMET,
-    type: EquipmentTypeEnum.WEAPON,
+    type: EquipmentTypeEnum.HELMET,
     name: ANCIENT_HELMET_NAME_BY_RARITY,
     skins: ANCIENT_HELMET_SKIN_BY_RARITY,
     defaultRarity: RarityEnum.COMMON,
