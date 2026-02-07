@@ -1,0 +1,217 @@
+{
+  "main": {
+    "id": "02f7812a3cfc3d18",
+    "type": "split",
+    "children": [
+      {
+        "id": "51c2d1343a47ad56",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9514cc0c77c68a14",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Architecture/Game MVP functionality.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Game MVP functionality"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "02a3d4fae261de82",
+    "type": "split",
+    "children": [
+      {
+        "id": "ffc85df183cdf883",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "317184ce77a9ddb2",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "683ba4e1e60c54a3",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "da9d13adcea2719e",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "7947ab8796f0ec52",
+    "type": "split",
+    "children": [
+      {
+        "id": "6640f9a97f075516",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3039264b6f187c87",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Inventory/Equipped items.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Equipped items"
+            }
+          },
+          {
+            "id": "67cbf6070d3eaee5",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Inventory/Equipped items.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Equipped items"
+            }
+          },
+          {
+            "id": "1279335bf14fa8e4",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "c81d6e135c510f30",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "e4a8a619399bb4a2",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Inventory/Equipped items.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Equipped items"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "9514cc0c77c68a14",
+  "lastOpenFiles": [
+    "Architecture/GamePage.png",
+    "Architecture/Files from old project.png",
+    "Architecture/File structure.md",
+    "Architecture/New file structure.md",
+    "Architecture/Game MVP functionality.md",
+    "Inventory/Craft inventory (currency inventory).md",
+    "Inventory/Craft inventory.png",
+    "Inventory/Inventory structure.png",
+    "Inventory/Equipped items.png",
+    "Inventory/Equipped items.md",
+    "Inventory/Equipment inventory (full).png",
+    "Inventory/Equipment inventory.png",
+    "Inventory/Equipment inventory.md",
+    "Inventory/Equipment/Equipment structure.png",
+    "Monsters/Monster.png",
+    "New folder",
+    "Monsters/Monsters.md",
+    "Inventory/Store.md",
+    "Monsters/Monsters structure.png",
+    "Architecture/File structure advices.md",
+    "Architecture",
+    "Inventory/Equipment",
+    "Untitled/Untitled",
+    "Monsters",
+    "Hero",
+    "Inventory/images",
+    "Welcome.md",
+    "Inventory"
+  ]
+}
