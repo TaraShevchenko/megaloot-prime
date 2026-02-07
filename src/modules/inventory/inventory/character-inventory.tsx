@@ -8,7 +8,6 @@ import {
 } from "shared/types/characteristics";
 import { inventoryPanelClasses } from "../shared/inventory-panel-classes";
 import { useCharacterInventoryStore } from "../shared/inventory.hooks";
-import { INVENTORY_STORE_REGISTRY } from "../shared/inventory.registry";
 import type { InventorySlot } from "../shared/inventory.types";
 import { InventoryUi } from "../shared/ui/inventory-ui";
 
@@ -47,7 +46,6 @@ export function CharacterInventory() {
         <div className={inventoryPanelClasses}>
           <InventoryUi
             store={useCharacterInventoryStore}
-            storeRegistry={INVENTORY_STORE_REGISTRY}
             gridClassName="grid-cols-3 w-[240px] justify-start"
           />
         </div>

@@ -21,10 +21,7 @@ export type InventorySlotDefinition = {
   maxStack?: number;
 };
 
-export type InventoryDragPayload = {
-  inventoryId: string;
-  index: number;
-};
+export type { InventoryDragPayload } from "modules/inventory/shared/dnd/dnd.types";
 
 export type InventoryType = {
   slots: InventorySlot[];

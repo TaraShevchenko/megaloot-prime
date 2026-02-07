@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, type DragEvent, type MouseEvent } from "react";
+import { useState, type MouseEvent } from "react";
+import { useDndMonitor } from "@dnd-kit/core";
 import { EquipmentStats } from "modules/equipment/client";
 import { RarityEnum } from "shared/types/rarity";
 import { Popover, PopoverContent, PopoverTrigger } from "shared/ui/popover";
 import { useInventoryStore } from "../inventory.hooks";
-import {
-  type InventoryStoreHook,
-  type InventoryStoreRegistry,
-} from "../inventory.store";
-import type { InventoryDragPayload, InventorySlot } from "../inventory.types";
+import type { InventoryStoreHook } from "../inventory.store";
+import type { InventorySlot } from "../inventory.types";
 import { InventorySlotCard } from "./inventory-slot-card";
 
 const SELL_VALUES: Record<RarityEnum, number> = {
@@ -30,44 +28,25 @@ const DISENCHANT_VALUES: Record<RarityEnum, number> = {
 
 type InventoryUiProps = {
   store?: InventoryStoreHook;
-  storeRegistry?: InventoryStoreRegistry;
   gridClassName?: string;
-};
-
-const parsePayload = (
-  event: DragEvent<HTMLDivElement>,
-): InventoryDragPayload | null => {
-  const payload = event.dataTransfer.getData("application/x-inventory-item");
-  if (!payload) return null;
-  try {
-    const parsed = JSON.parse(payload) as InventoryDragPayload;
-    if (!parsed?.inventoryId || typeof parsed.index !== "number") {
-      return null;
-    }
-    return parsed;
-  } catch {
-    return null;
-  }
 };
 
 export function InventoryUi({
   store = useInventoryStore,
-  storeRegistry,
   gridClassName,
 }: InventoryUiProps) {
   const slots = store((state) => state.slots);
   const slotDefinitions = store((state) => state.slotDefinitions);
   const inventoryId = store((state) => state.id);
-  const dragIndex = store((state) => state.dragIndex);
-  const hoverIndex = store((state) => state.hoverIndex);
-  const dragStart = store((state) => state.dragStart);
-  const dropOnSlot = store((state) => state.dropOnSlot);
-  const dragEnter = store((state) => state.dragEnter);
-  const dragLeave = store((state) => state.dragLeave);
-  const dragEnd = store((state) => state.dragEnd);
   const removeItem = store((state) => state.removeItem);
   const removeItemStack = store((state) => state.removeItemStack);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  useDndMonitor({
+    onDragStart: () => setOpenIndex(null),
+    onDragEnd: () => setOpenIndex(null),
+    onDragCancel: () => setOpenIndex(null),
+  });
 
   const handleContextMenu = (
     event: MouseEvent<HTMLDivElement>,
@@ -93,110 +72,6 @@ export function InventoryUi({
     setOpenIndex(null);
   };
 
-  const handleDrop = (event: DragEvent<HTMLDivElement>, index: number) => {
-    const payload = parsePayload(event);
-    if (!payload || payload.inventoryId === inventoryId) {
-      dropOnSlot(index);
-      return;
-    }
-
-    if (!storeRegistry) {
-      dropOnSlot(index);
-      return;
-    }
-
-    const sourceStore = storeRegistry[payload.inventoryId];
-    if (!sourceStore) {
-      dropOnSlot(index);
-      return;
-    }
-
-    const sourceState = sourceStore.getState();
-    const item = sourceState.slots[payload.index];
-    if (!item) {
-      dropOnSlot(index);
-      return;
-    }
-
-    const targetState = store.getState();
-    if (!targetState.canPlaceItem(index, item)) {
-      store.setState({ notice: "Slot is restricted." });
-      dragEnd();
-      return;
-    }
-
-    const taken = sourceState.takeItem(payload.index);
-    if (!taken) {
-      dragEnd();
-      return;
-    }
-
-    const targetItem = targetState.slots[index];
-
-    if (targetState.placeItem(index, taken)) {
-      sourceState.dragEnd();
-      dragEnd();
-      return;
-    }
-
-    if (targetItem) {
-      const stackLimit = Math.max(1, slotDefinitions[index]?.maxStack ?? 1);
-      const stackable =
-        stackLimit > 1 &&
-        !!targetItem.stackKey &&
-        !!taken.stackKey &&
-        targetItem.stackKey === taken.stackKey;
-
-      if (stackable) {
-        sourceState.placeItem(payload.index, taken);
-        sourceState.dragEnd();
-        dragEnd();
-        return;
-      }
-
-      const canSwapBack = sourceState.canPlaceItem(payload.index, targetItem);
-      if (!canSwapBack) {
-        sourceState.placeItem(payload.index, taken);
-        sourceState.dragEnd();
-        dragEnd();
-        return;
-      }
-
-      const swappedOut = targetState.takeItem(index);
-      if (!swappedOut) {
-        sourceState.placeItem(payload.index, taken);
-        sourceState.dragEnd();
-        dragEnd();
-        return;
-      }
-
-      if (!sourceState.placeItem(payload.index, swappedOut)) {
-        targetState.placeItem(index, swappedOut);
-        sourceState.placeItem(payload.index, taken);
-        sourceState.dragEnd();
-        dragEnd();
-        return;
-      }
-
-      if (targetState.placeItem(index, taken)) {
-        sourceState.dragEnd();
-        dragEnd();
-        return;
-      }
-
-      sourceState.takeItem(payload.index);
-      sourceState.placeItem(payload.index, taken);
-      targetState.placeItem(index, swappedOut);
-      sourceState.dragEnd();
-      dragEnd();
-      return;
-    }
-
-    sourceState.placeItem(payload.index, taken);
-    sourceState.dragEnd();
-    dragEnd();
-  };
-
   const gridTemplate =
     gridClassName ?? "grid-cols-[repeat(auto-fill,80px)] justify-start";
 
@@ -208,22 +83,6 @@ export function InventoryUi({
           slotDefinition: slotDefinitions[index],
           inventoryId,
           index,
-          isActive: dragIndex === index,
-          isHover: hoverIndex === index,
-          onDragStart: () => {
-            setOpenIndex(null);
-            dragStart(index);
-          },
-          onDrop: (event: DragEvent<HTMLDivElement>) => {
-            setOpenIndex(null);
-            handleDrop(event, index);
-          },
-          onDragEnter: () => dragEnter(index),
-          onDragLeave: dragLeave,
-          onDragEnd: () => {
-            setOpenIndex(null);
-            dragEnd();
-          },
           onContextMenu: (event: MouseEvent<HTMLDivElement>) =>
             handleContextMenu(event, index, slot),
         };

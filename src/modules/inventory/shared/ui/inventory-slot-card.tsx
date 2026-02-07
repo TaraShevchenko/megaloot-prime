@@ -1,29 +1,29 @@
-import { type DragEvent, type MouseEvent } from "react";
+import { type MouseEvent } from "react";
 import Image from "next/image";
+import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { EQUIPMENT_ITEMS, type EquipmentEntry } from "modules/equipment";
 import { EquipmentCard } from "modules/equipment/client";
+import {
+  DND_DROP_TYPE,
+  DND_ITEM_TYPE,
+  buildInventoryItemId,
+  buildInventorySlotId,
+} from "modules/inventory/shared/dnd/dnd.types";
 import { RARITY_ORDER } from "shared/types/rarity";
 import { cn } from "shared/utils/cn";
 import type {
-  InventoryDragPayload,
   InventoryItem,
   InventorySlot,
   InventorySlotDefinition,
 } from "../inventory.types";
 
 type InventorySlotCardProps = {
+  className?: string;
   slot: InventorySlot;
   slotDefinition: InventorySlotDefinition;
   inventoryId: string;
   index: number;
-  isActive: boolean;
-  isHover: boolean;
   variant?: "default" | "large";
-  onDragStart: () => void;
-  onDrop: (event: DragEvent<HTMLDivElement>) => void;
-  onDragEnter: () => void;
-  onDragLeave: () => void;
-  onDragEnd: () => void;
   onContextMenu: (event: MouseEvent<HTMLDivElement>) => void;
 };
 
@@ -55,22 +55,43 @@ const getEquipmentEntry = (item: InventoryItem): EquipmentEntry => {
 };
 
 export function InventorySlotCard({
+  className,
   slot,
   slotDefinition,
   inventoryId,
   index,
-  isActive,
-  isHover,
   variant = "default",
-  onDragStart,
-  onDrop,
-  onDragEnter,
-  onDragLeave,
-  onDragEnd,
   onContextMenu,
 }: InventorySlotCardProps) {
   const stackCount = slot?.stackCount ?? 1;
   const isLarge = variant === "large";
+  const droppableId = buildInventorySlotId(inventoryId, index);
+  const draggableId = buildInventoryItemId(inventoryId, index);
+
+  const { setNodeRef: setDropRef, isOver } = useDroppable({
+    id: droppableId,
+    data: {
+      type: DND_DROP_TYPE.INVENTORY_SLOT,
+      inventoryId,
+      index,
+    },
+  });
+
+  const {
+    setNodeRef: setDragRef,
+    attributes,
+    listeners,
+    isDragging,
+  } = useDraggable({
+    id: draggableId,
+    data: slot
+      ? {
+          type: DND_ITEM_TYPE.INVENTORY_ITEM,
+          payload: { inventoryId, index },
+        }
+      : undefined,
+    disabled: !slot,
+  });
 
   return (
     <div
@@ -78,44 +99,21 @@ export function InventorySlotCard({
       aria-label={
         slot ? `${slot.name} slot` : `${slotDefinition.label} slot ${index + 1}`
       }
-      className={cn("aspect-square p-1", isLarge && "p-2")}
-      onDrop={(event) => {
-        event.preventDefault();
-        onDrop(event);
-      }}
-      onDragOver={(event) => {
-        event.preventDefault();
-        onDragEnter();
-      }}
-      onDragLeave={onDragLeave}
+      ref={setDropRef}
+      className={cn("aspect-square p-1", isLarge && "p-2", className)}
       onContextMenu={onContextMenu}
     >
       <div
         className={cn(
           "relative h-full w-full select-none overflow-hidden rounded-xl border border-transparent transition",
-          isHover && "border-cyan-200/80 ring-2 ring-cyan-200/40",
+          isOver && "border-cyan-200/80 ring-2 ring-cyan-200/40",
         )}
       >
         {slot ? (
           <div
-            draggable
-            onDragStart={(event) => {
-              const payload: InventoryDragPayload = {
-                inventoryId,
-                index,
-              };
-              event.dataTransfer.setData(
-                "application/x-inventory-item",
-                JSON.stringify(payload),
-              );
-              event.dataTransfer.setData("text/plain", slot.instanceId);
-              event.dataTransfer.effectAllowed = "move";
-              onDragStart();
-            }}
-            onDragEnd={(event) => {
-              event.preventDefault();
-              onDragEnd();
-            }}
+            ref={setDragRef}
+            {...attributes}
+            {...listeners}
             className="flex h-full select-none items-center justify-center cursor-grab active:cursor-grabbing"
           >
             <EquipmentCard
@@ -150,9 +148,9 @@ export function InventorySlotCard({
         <div
           className={cn(
             "pointer-events-none absolute inset-0 rounded-xl bg-black/30 transition-opacity",
-            isActive && "opacity-40",
-            !isActive && isHover && "opacity-20",
-            !isActive && !isHover && "opacity-0",
+            isDragging && "opacity-40",
+            !isDragging && isOver && "opacity-20",
+            !isDragging && !isOver && "opacity-0",
           )}
         />
       </div>

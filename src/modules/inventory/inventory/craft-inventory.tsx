@@ -1,72 +1,59 @@
 "use client";
 
-import { useMemo, type DragEvent, type MouseEvent } from "react";
-import Image from "next/image";
+import { useMemo, useState, type MouseEvent } from "react";
+import Image, { type StaticImageData } from "next/image";
+import { useDndMonitor, useDraggable } from "@dnd-kit/core";
+import {
+  type CraftCurrencyDragPayload,
+  DND_ITEM_TYPE,
+  buildCraftCurrencyId,
+  isCraftCurrencyDragData,
+  isInventoryDropData,
+} from "modules/inventory/shared/dnd/dnd.types";
 import {
   CHARACTERISTIC_LABELS,
   CHARACTERISTICS_ORDER,
   formatCharacteristicValue,
   rollCharacteristicValue,
+  type CharacteristicValue,
   type CharacteristicsEnum,
 } from "shared/types/characteristics";
-import { RARITY_LABELS, RARITY_ORDER } from "shared/types/rarity";
+import {
+  RARITY_LABELS,
+  RARITY_ORDER,
+  RarityEnum,
+  type RarityEnum as RarityEnumType,
+} from "shared/types/rarity";
 import { cn } from "shared/utils/cn";
 import {
   ADD_ICONS,
   CHANGE_VALUE_ICONS,
+  cloneItemIcon,
   equipmentPartIcon,
   goldIcon,
+  improve3RandomIcon,
+  improveRandomIcon,
+  improveSelectedIcon,
+  rarityUpdateToEpicIcon,
+  rarityUpdateToLegendaryIcon,
+  rarityUpdateToRareIcon,
+  rarityUpdateToUncommonIcon,
+  removeRandomIcon,
+  removeSelectedIcon,
 } from "../shared/craft-currency.icons";
 import { useCraftCurrencyStore } from "../shared/craft-currency.store";
+import {
+  FORGE_ACTIONS,
+  type RarityUpgrade,
+} from "../shared/craft-currency.types";
 import { inventoryPanelClasses } from "../shared/inventory-panel-classes";
 import {
   CRAFT_ITEM_SLOT_INDEX,
   useCraftInventoryStore,
+  useInventoryStore,
 } from "../shared/inventory.hooks";
-import { INVENTORY_STORE_REGISTRY } from "../shared/inventory.registry";
-import type { InventoryDragPayload, InventoryItem } from "../shared/inventory.types";
+import type { InventoryItem } from "../shared/inventory.types";
 import { InventorySlotCard } from "../shared/ui/inventory-slot-card";
-
-type CraftCurrencyDragPayload =
-  | { type: "gold" }
-  | { type: "parts" }
-  | { type: "addChar"; level: number }
-  | { type: "changeValueChar"; level: number };
-
-const parsePayload = (
-  event: DragEvent<HTMLDivElement>,
-): InventoryDragPayload | null => {
-  const payload = event.dataTransfer.getData("application/x-inventory-item");
-  if (!payload) return null;
-  try {
-    const parsed = JSON.parse(payload) as InventoryDragPayload;
-    if (!parsed?.inventoryId || typeof parsed.index !== "number") {
-      return null;
-    }
-    return parsed;
-  } catch {
-    return null;
-  }
-};
-
-const parseCraftCurrencyPayload = (
-  event: DragEvent<HTMLDivElement>,
-): CraftCurrencyDragPayload | null => {
-  const payload = event.dataTransfer.getData("application/x-craft-currency");
-  if (!payload) return null;
-  try {
-    const parsed = JSON.parse(payload) as CraftCurrencyDragPayload;
-    if (!parsed?.type) return null;
-    if (parsed.type === "addChar" || parsed.type === "changeValueChar") {
-      if (typeof parsed.level !== "number" || !Number.isFinite(parsed.level)) {
-        return null;
-      }
-    }
-    return parsed;
-  } catch {
-    return null;
-  }
-};
 
 const buildStackKey = (item: {
   type: string;
@@ -100,12 +87,30 @@ const pickWeighted = <T,>(items: T[], weights: number[]): T => {
   return items[items.length - 1]!;
 };
 
+const rollChance = (chance: number): boolean => Math.random() < chance;
+
+const pickDistinct = <T,>(items: T[], count: number): T[] => {
+  const picked: T[] = [];
+  const pool = [...items];
+  while (pool.length > 0 && picked.length < count) {
+    const item = pickRandom(pool);
+    picked.push(item);
+    pool.splice(pool.indexOf(item), 1);
+  }
+  return picked;
+};
+
+const createInstanceId = (): string =>
+  `loot-${Date.now()}-${Math.floor(Math.random() * 1e9)}`;
+
 const STAT_SLOT_COUNT = 6;
 
 type RolledStatSlot = { stat: CharacteristicsEnum; value: number };
 type RolledStatSlotEntry = RolledStatSlot | null;
 
-const normalizeRolledStatSlots = (item: InventoryItem): RolledStatSlotEntry[] => {
+const normalizeRolledStatSlots = (
+  item: InventoryItem,
+): RolledStatSlotEntry[] => {
   const maybeSlots = item.rolledStatSlots;
 
   if (Array.isArray(maybeSlots) && maybeSlots.length === STAT_SLOT_COUNT) {
@@ -149,19 +154,28 @@ const buildRolledStatsFromSlots = (
   return rolled;
 };
 
+const getRangeBounds = (
+  value: CharacteristicValue,
+): { min: number; max: number } => {
+  if (Array.isArray(value)) {
+    const [first, second] = value;
+    return { min: Math.min(first, second), max: Math.max(first, second) };
+  }
+
+  return { min: value, max: value };
+};
+
+const clampToRange = (value: number, range: CharacteristicValue): number => {
+  const { min, max } = getRangeBounds(range);
+  return Math.max(min, Math.min(max, value));
+};
+
 export function CraftInventory() {
   const slots = useCraftInventoryStore((state) => state.slots);
   const slotDefinitions = useCraftInventoryStore(
     (state) => state.slotDefinitions,
   );
   const inventoryId = useCraftInventoryStore((state) => state.id);
-  const dragIndex = useCraftInventoryStore((state) => state.dragIndex);
-  const hoverIndex = useCraftInventoryStore((state) => state.hoverIndex);
-  const dragStart = useCraftInventoryStore((state) => state.dragStart);
-  const dropOnSlot = useCraftInventoryStore((state) => state.dropOnSlot);
-  const dragEnter = useCraftInventoryStore((state) => state.dragEnter);
-  const dragLeave = useCraftInventoryStore((state) => state.dragLeave);
-  const dragEnd = useCraftInventoryStore((state) => state.dragEnd);
   const notice = useCraftInventoryStore((state) => state.notice);
 
   const gold = useCraftCurrencyStore((state) => state.gold);
@@ -172,8 +186,13 @@ export function CraftInventory() {
   const changeValueChars = useCraftCurrencyStore(
     (state) => state.changeValueChars,
   );
+  const forgeActions = useCraftCurrencyStore((state) => state.forgeActions);
+  const rarityUpgrades = useCraftCurrencyStore((state) => state.rarityUpgrades);
 
   const item = slots[CRAFT_ITEM_SLOT_INDEX];
+  const [selectedStatIndex, setSelectedStatIndex] = useState<number | null>(
+    null,
+  );
 
   const forgeParams = useMemo(() => {
     if (!item) {
@@ -190,6 +209,7 @@ export function CraftInventory() {
     }));
   }, [item]);
 
+  // Responsibility: Craft action application (currency -> item mutations).
   const applyCurrencyToCraftItem = (payload: CraftCurrencyDragPayload) => {
     const targetState = useCraftInventoryStore.getState();
     const current = targetState.slots[CRAFT_ITEM_SLOT_INDEX];
@@ -208,12 +228,38 @@ export function CraftInventory() {
 
     const currencyState = useCraftCurrencyStore.getState();
     const currentSlots = normalizeRolledStatSlots(current);
-    const currentRolledStats = buildRolledStatsFromSlots(currentSlots);
+
+    const updateFromSlots = (
+      nextSlots: RolledStatSlotEntry[],
+      options?: { rarity?: RarityEnumType },
+    ) => {
+      const nextRarity = options?.rarity ?? current.rarity;
+      const nextRolledStats = buildRolledStatsFromSlots(nextSlots);
+
+      const nextItem = {
+        ...current,
+        rarity: nextRarity,
+        rolledStats: nextRolledStats,
+        rolledStatSlots: nextSlots,
+        characteristics: nextRolledStats,
+        stackKey: buildStackKey({
+          type: current.type,
+          id: current.id,
+          rarity: nextRarity,
+          rolledStats: nextRolledStats,
+        }),
+      };
+
+      setCraftItem(nextItem);
+      return nextItem;
+    };
 
     if (payload.type === "gold" || payload.type === "parts") {
       const currentIndex = RARITY_ORDER.indexOf(current.rarity);
       if (currentIndex === -1 || currentIndex >= RARITY_ORDER.length - 1) {
-        useCraftInventoryStore.setState({ notice: "Item is already max rarity." });
+        useCraftInventoryStore.setState({
+          notice: "Item is already max rarity.",
+        });
         return;
       }
 
@@ -236,25 +282,50 @@ export function CraftInventory() {
       const nextSlots = currentSlots.map((slot) =>
         slot ? { stat: slot.stat, value: slot.value } : null,
       );
-      const nextRolledStats = { ...currentRolledStats };
-
-      const nextItem = {
-        ...current,
-        rarity: nextRarity,
-        rolledStats: nextRolledStats,
-        rolledStatSlots: nextSlots,
-        characteristics: nextRolledStats,
-        stackKey: buildStackKey({
-          type: current.type,
-          id: current.id,
-          rarity: nextRarity,
-          rolledStats: nextRolledStats,
-        }),
-      };
-
-      setCraftItem(nextItem);
+      updateFromSlots(nextSlots, { rarity: nextRarity });
       useCraftInventoryStore.setState({
         notice: `Upgraded rarity to ${RARITY_LABELS[nextRarity]} (cost ${cost} ${payload.type}).`,
+      });
+      return;
+    }
+
+    if (payload.type === "setRarity") {
+      const targetRarity = payload.rarity;
+      const currentIndex = RARITY_ORDER.indexOf(current.rarity);
+      const targetIndex = RARITY_ORDER.indexOf(targetRarity);
+      if (targetIndex === -1) {
+        useCraftInventoryStore.setState({ notice: "Invalid rarity." });
+        return;
+      }
+
+      if (targetIndex <= currentIndex) {
+        useCraftInventoryStore.setState({
+          notice: `Item is already ${RARITY_LABELS[current.rarity]} or higher.`,
+        });
+        return;
+      }
+
+      if ((currencyState.rarityUpgrades[targetRarity] ?? 0) < 1) {
+        useCraftInventoryStore.setState({
+          notice: `Not enough rarity-upgrade (${RARITY_LABELS[targetRarity]}).`,
+        });
+        return;
+      }
+
+      const spent = currencyState.consumeRarityUpgrade(targetRarity, 1);
+      if (!spent) {
+        useCraftInventoryStore.setState({
+          notice: `Not enough rarity-upgrade (${RARITY_LABELS[targetRarity]}).`,
+        });
+        return;
+      }
+
+      const nextSlots = currentSlots.map((slot) =>
+        slot ? { stat: slot.stat, value: slot.value } : null,
+      );
+      updateFromSlots(nextSlots, { rarity: targetRarity });
+      useCraftInventoryStore.setState({
+        notice: `Updated rarity to ${RARITY_LABELS[targetRarity]}.`,
       });
       return;
     }
@@ -288,24 +359,11 @@ export function CraftInventory() {
       currencyState.consumeChangeValueChar(payload.level, 1);
 
       const nextSlots = [...currentSlots];
-      nextSlots[levelIndex] = { stat, value: Math.round(rollCharacteristicValue(range)) };
-
-      const nextRolledStats = buildRolledStatsFromSlots(nextSlots);
-
-      const nextItem = {
-        ...current,
-        rolledStats: nextRolledStats,
-        rolledStatSlots: nextSlots,
-        characteristics: nextRolledStats,
-        stackKey: buildStackKey({
-          type: current.type,
-          id: current.id,
-          rarity: current.rarity,
-          rolledStats: nextRolledStats,
-        }),
+      nextSlots[levelIndex] = {
+        stat,
+        value: Math.round(rollCharacteristicValue(range)),
       };
-
-      setCraftItem(nextItem);
+      updateFromSlots(nextSlots);
       useCraftInventoryStore.setState({
         notice: `Changed value for ${CHARACTERISTIC_LABELS[stat]}.`,
       });
@@ -361,165 +419,281 @@ export function CraftInventory() {
       currencyState.consumeAddOrChangeChar(payload.level, 1);
 
       const nextSlots = [...currentSlots];
-      nextSlots[levelIndex] = { stat: nextStat, value: Math.round(rollCharacteristicValue(range)) };
-
-      const nextRolledStats = buildRolledStatsFromSlots(nextSlots);
-
-      const nextItem = {
-        ...current,
-        rolledStats: nextRolledStats,
-        rolledStatSlots: nextSlots,
-        characteristics: nextRolledStats,
-        stackKey: buildStackKey({
-          type: current.type,
-          id: current.id,
-          rarity: current.rarity,
-          rolledStats: nextRolledStats,
-        }),
+      nextSlots[levelIndex] = {
+        stat: nextStat,
+        value: Math.round(rollCharacteristicValue(range)),
       };
-
-      setCraftItem(nextItem);
+      updateFromSlots(nextSlots);
       useCraftInventoryStore.setState({
         notice: `Added ${CHARACTERISTIC_LABELS[nextStat]}.`,
       });
+      return;
+    }
+
+    if (FORGE_ACTIONS.includes(payload.type)) {
+      const action = payload.type;
+      const hasToken = (currencyState.forgeActions[action] ?? 0) > 0;
+      if (!hasToken) {
+        useCraftInventoryStore.setState({ notice: `Not enough ${action}.` });
+        return;
+      }
+
+      const filledIndexes = currentSlots.flatMap((slot, index) =>
+        slot ? [index] : [],
+      );
+
+      const getSelectedIndex = (): number | null => {
+        if (selectedStatIndex === null) return null;
+        if (selectedStatIndex < 0 || selectedStatIndex >= STAT_SLOT_COUNT) {
+          return null;
+        }
+        return selectedStatIndex;
+      };
+
+      const spendAction = () => {
+        const spent = currencyState.consumeForgeAction(action, 1);
+        if (!spent) {
+          useCraftInventoryStore.setState({ notice: `Not enough ${action}.` });
+          return false;
+        }
+        return true;
+      };
+
+      const canImproveSlotAt = (index: number): boolean => {
+        const slot = currentSlots[index];
+        if (!slot) return false;
+        const range = current.statRanges?.[current.rarity]?.[slot.stat];
+        if (!range) return false;
+        const { min, max } = getRangeBounds(range);
+        return max > min;
+      };
+
+      const improveSlotAt = (index: number): boolean => {
+        const slot = currentSlots[index];
+        if (!slot) return false;
+        const range = current.statRanges?.[current.rarity]?.[slot.stat];
+        if (!range) return false;
+
+        const { min, max } = getRangeBounds(range);
+        if (max <= min) return false;
+
+        const delta = Math.max(1, Math.round((max - min) * 0.15));
+        const nextValue = clampToRange(slot.value + delta, range);
+        if (nextValue === slot.value) return false;
+
+        currentSlots[index] = { stat: slot.stat, value: Math.round(nextValue) };
+        return true;
+      };
+
+      const removeSlotAt = (index: number): boolean => {
+        if (!currentSlots[index]) return false;
+        currentSlots[index] = null;
+        return true;
+      };
+
+      if (action === "removeRandomChar") {
+        if (filledIndexes.length === 0) {
+          useCraftInventoryStore.setState({
+            notice: "No characteristics to remove.",
+          });
+          return;
+        }
+        if (!spendAction()) return;
+        const index = pickRandom(filledIndexes);
+        removeSlotAt(index);
+        updateFromSlots([...currentSlots]);
+        useCraftInventoryStore.setState({
+          notice: "Removed random characteristic.",
+        });
+        return;
+      }
+
+      if (action === "removeSelectedChar") {
+        const index = getSelectedIndex();
+        if (index === null) {
+          useCraftInventoryStore.setState({
+            notice: "Select a characteristic first.",
+          });
+          return;
+        }
+        if (!currentSlots[index]) {
+          useCraftInventoryStore.setState({
+            notice: "Selected slot has no characteristic.",
+          });
+          return;
+        }
+        if (!spendAction()) return;
+        removeSlotAt(index);
+        updateFromSlots([...currentSlots]);
+        useCraftInventoryStore.setState({
+          notice: "Removed selected characteristic.",
+        });
+        return;
+      }
+
+      if (action === "improveRandomChar") {
+        const improvableIndexes = filledIndexes.filter((index) =>
+          canImproveSlotAt(index),
+        );
+        if (improvableIndexes.length === 0) {
+          useCraftInventoryStore.setState({
+            notice: "No characteristics to improve.",
+          });
+          return;
+        }
+        if (!spendAction()) return;
+        const index = pickRandom(improvableIndexes);
+        const improved = improveSlotAt(index);
+        if (!improved) {
+          useCraftInventoryStore.setState({
+            notice: "Could not improve characteristic.",
+          });
+          return;
+        }
+        updateFromSlots([...currentSlots]);
+        useCraftInventoryStore.setState({
+          notice: "Improved random characteristic.",
+        });
+        return;
+      }
+
+      if (action === "improveSelectedChar") {
+        const index = getSelectedIndex();
+        if (index === null) {
+          useCraftInventoryStore.setState({
+            notice: "Select a characteristic first.",
+          });
+          return;
+        }
+        if (!currentSlots[index]) {
+          useCraftInventoryStore.setState({
+            notice: "Selected slot has no characteristic.",
+          });
+          return;
+        }
+        if (!canImproveSlotAt(index)) {
+          useCraftInventoryStore.setState({
+            notice: "Selected characteristic cannot be improved.",
+          });
+          return;
+        }
+        if (!spendAction()) return;
+        const improved = improveSlotAt(index);
+        if (!improved) {
+          useCraftInventoryStore.setState({
+            notice: "Could not improve characteristic.",
+          });
+          return;
+        }
+        updateFromSlots([...currentSlots]);
+        useCraftInventoryStore.setState({
+          notice: "Improved selected characteristic.",
+        });
+        return;
+      }
+
+      if (action === "improve3RandomChar") {
+        const improvableIndexes = filledIndexes.filter((index) =>
+          canImproveSlotAt(index),
+        );
+        if (improvableIndexes.length === 0) {
+          useCraftInventoryStore.setState({
+            notice: "No characteristics to improve.",
+          });
+          return;
+        }
+        if (!spendAction()) return;
+
+        const pickedIndexes = pickDistinct(improvableIndexes, 3);
+
+        let improvedCount = 0;
+        for (const index of pickedIndexes) {
+          if (improveSlotAt(index)) improvedCount += 1;
+        }
+
+        let removedCount = 0;
+        if (rollChance(0.2)) {
+          const filledAfterImprove = currentSlots.flatMap((slot, index) =>
+            slot ? [index] : [],
+          );
+          const removalIndexes = pickDistinct(filledAfterImprove, 3);
+          for (const index of removalIndexes) {
+            if (removeSlotAt(index)) removedCount += 1;
+          }
+        }
+
+        updateFromSlots([...currentSlots]);
+        useCraftInventoryStore.setState({
+          notice:
+            removedCount > 0
+              ? `Improved ${improvedCount} characteristics, but removed ${removedCount}.`
+              : `Improved ${improvedCount} characteristics.`,
+        });
+        return;
+      }
+
+      if (action === "cloneItem") {
+        const backpackState = useInventoryStore.getState();
+        const hasFreeSlot = backpackState.slots.some((slot) => !slot);
+        if (!hasFreeSlot) {
+          useCraftInventoryStore.setState({
+            notice: "Backpack is full.",
+          });
+          return;
+        }
+        if (!spendAction()) return;
+
+        const clone: InventoryItem = {
+          ...current,
+          instanceId: createInstanceId(),
+        };
+
+        backpackState.addItem(clone);
+        const backpackNotice = useInventoryStore.getState().notice;
+
+        useCraftInventoryStore.setState({
+          notice: backpackNotice
+            ? `Clone failed: ${backpackNotice}`
+            : "Cloned item into backpack.",
+        });
+        return;
+      }
     }
   };
 
-  const handleDrop = (event: DragEvent<HTMLDivElement>, index: number) => {
-    const craftCurrencyPayload = parseCraftCurrencyPayload(event);
-    if (craftCurrencyPayload) {
-      if (index !== CRAFT_ITEM_SLOT_INDEX) {
+  useDndMonitor({
+    onDragEnd: ({ active, over }) => {
+      const activeData = active.data.current;
+      if (!isCraftCurrencyDragData(activeData)) return;
+      if (!over) return;
+
+      const overData = over.data.current;
+      if (
+        !isInventoryDropData(overData) ||
+        overData.inventoryId !== inventoryId ||
+        overData.index !== CRAFT_ITEM_SLOT_INDEX
+      ) {
         useCraftInventoryStore.setState({
           notice: "Drop crafting currency on the item slot.",
         });
         return;
       }
 
-      applyCurrencyToCraftItem(craftCurrencyPayload);
-      return;
-    }
+      applyCurrencyToCraftItem(activeData.payload);
+    },
+  });
 
-    const payload = parsePayload(event);
-    if (!payload) {
-      dropOnSlot(index);
-      return;
-    }
-
-    if (payload.inventoryId === inventoryId) {
-      dragEnd();
-      return;
-    }
-
-    const sourceStore = INVENTORY_STORE_REGISTRY[payload.inventoryId];
-    if (!sourceStore) {
-      dropOnSlot(index);
-      return;
-    }
-
-    const sourceState = sourceStore.getState();
-    const sourceItem = sourceState.slots[payload.index];
-    if (!sourceItem) {
-      dropOnSlot(index);
-      return;
-    }
-
-    const targetState = useCraftInventoryStore.getState();
-    if (!targetState.canPlaceItem(index, sourceItem)) {
-      useCraftInventoryStore.setState({ notice: "Slot is restricted." });
-      dragEnd();
-      return;
-    }
-
-    const taken = sourceState.takeItem(payload.index);
-    if (!taken) {
-      dragEnd();
-      return;
-    }
-
-    const targetItem = targetState.slots[index];
-
-    if (targetState.placeItem(index, taken)) {
-      sourceState.dragEnd();
-      dragEnd();
-      return;
-    }
-
-    if (targetItem) {
-      const stackLimit = Math.max(
-        1,
-        targetState.slotDefinitions[index]?.maxStack ?? 1,
-      );
-      const stackable =
-        stackLimit > 1 &&
-        !!targetItem.stackKey &&
-        !!taken.stackKey &&
-        targetItem.stackKey === taken.stackKey;
-
-      if (stackable) {
-        sourceState.placeItem(payload.index, taken);
-        sourceState.dragEnd();
-        dragEnd();
-        return;
-      }
-
-      const canSwapBack = sourceState.canPlaceItem(payload.index, targetItem);
-      if (!canSwapBack) {
-        sourceState.placeItem(payload.index, taken);
-        sourceState.dragEnd();
-        dragEnd();
-        return;
-      }
-
-      const swappedOut = targetState.takeItem(index);
-      if (!swappedOut) {
-        sourceState.placeItem(payload.index, taken);
-        sourceState.dragEnd();
-        dragEnd();
-        return;
-      }
-
-      if (!sourceState.placeItem(payload.index, swappedOut)) {
-        targetState.placeItem(index, swappedOut);
-        sourceState.placeItem(payload.index, taken);
-        sourceState.dragEnd();
-        dragEnd();
-        return;
-      }
-
-      if (targetState.placeItem(index, taken)) {
-        sourceState.dragEnd();
-        dragEnd();
-        return;
-      }
-
-      sourceState.takeItem(payload.index);
-      sourceState.placeItem(payload.index, taken);
-      targetState.placeItem(index, swappedOut);
-      sourceState.dragEnd();
-      dragEnd();
-      return;
-    }
-
-    sourceState.placeItem(payload.index, taken);
-    sourceState.dragEnd();
-    dragEnd();
-  };
-
+  // Responsibility: UI slot rendering (item slots).
   const renderItemSlot = (index: number) => (
-    <div className="w-[225px]" key={slotDefinitions[index]?.id ?? index}>
+    <div className="w-[200px]" key={slotDefinitions[index]?.id ?? index}>
       <InventorySlotCard
+        className="p-0"
         slot={slots[index]}
         slotDefinition={slotDefinitions[index]}
         inventoryId={inventoryId}
         index={index}
-        isActive={dragIndex === index}
-        isHover={hoverIndex === index}
         variant="large"
-        onDragStart={() => dragStart(index)}
-        onDrop={(event: DragEvent<HTMLDivElement>) => handleDrop(event, index)}
-        onDragEnter={() => dragEnter(index)}
-        onDragLeave={dragLeave}
-        onDragEnd={dragEnd}
+        // Responsibility: Context menu behavior (currently suppresses default).
         onContextMenu={(event: MouseEvent<HTMLDivElement>) =>
           event.preventDefault()
         }
@@ -527,30 +701,228 @@ export function CraftInventory() {
     </div>
   );
 
-  const renderResourceSlot = (
-    icon: typeof goldIcon,
-    count: number,
-    key: string,
-    dragPayload?: CraftCurrencyDragPayload,
-  ) => (
+  return (
+    <div className="flex flex-1 flex-col gap-4">
+      <div className={cn("w-fit", inventoryPanelClasses)}>
+        <div className="flex flex-col gap-4">
+          <div className="grid items-stretch justify-center gap-4 [grid-template-columns:auto_auto_auto_auto_auto]">
+            <div className="grid grid-cols-1">
+              {ADD_ICONS.map((icon, index) => (
+                <CraftCurrencySlot
+                  key={`add-slot-${index + 1}`}
+                  icon={icon}
+                  count={addOrChangeChars[index] ?? 0}
+                  payload={{ type: "addChar", level: index + 1 }}
+                />
+              ))}
+            </div>
+
+            <div className="grid grid-cols-1">
+              {[
+                {
+                  icon: removeRandomIcon,
+                  key: "remove-random",
+                  count: forgeActions.removeRandomChar ?? 0,
+                  payload: { type: "removeRandomChar" as const },
+                },
+                {
+                  icon: removeSelectedIcon,
+                  key: "remove-selected",
+                  count: forgeActions.removeSelectedChar ?? 0,
+                  payload: { type: "removeSelectedChar" as const },
+                },
+                {
+                  icon: improveRandomIcon,
+                  key: "improve-random",
+                  count: forgeActions.improveRandomChar ?? 0,
+                  payload: { type: "improveRandomChar" as const },
+                },
+                {
+                  icon: improveSelectedIcon,
+                  key: "improve-selected",
+                  count: forgeActions.improveSelectedChar ?? 0,
+                  payload: { type: "improveSelectedChar" as const },
+                },
+                {
+                  icon: improve3RandomIcon,
+                  key: "improve-3-random",
+                  count: forgeActions.improve3RandomChar ?? 0,
+                  payload: { type: "improve3RandomChar" as const },
+                },
+                {
+                  icon: cloneItemIcon,
+                  key: "clone-item",
+                  count: forgeActions.cloneItem ?? 0,
+                  payload: { type: "cloneItem" as const },
+                },
+              ].map(({ icon, key, count, payload }) => (
+                <CraftCurrencySlot
+                  key={`forge-${key}`}
+                  icon={icon}
+                  count={count}
+                  payload={payload}
+                />
+              ))}
+            </div>
+
+            <div className="flex flex-col items-center gap-4 self-stretch min-h-0">
+              {renderItemSlot(CRAFT_ITEM_SLOT_INDEX)}
+
+              <div className="w-full flex-1 min-h-0 rounded-2xl border border-white/10 bg-black/20 px-3 py-2">
+                <div className="mt-2 flex flex-1 min-h-0 flex-col gap-1 overflow-auto text-sm">
+                  {forgeParams.map((param, index) => {
+                    const statLabel = param.stat
+                      ? CHARACTERISTIC_LABELS[param.stat]
+                      : null;
+                    const hasValue = typeof param.value === "number";
+                    const statRange =
+                      param.stat && item?.rarity
+                        ? item?.statRanges?.[item.rarity]?.[param.stat]
+                        : undefined;
+                    return (
+                      <div
+                        key={index}
+                        className={cn(
+                          "font-mono text-[16px] cursor-pointer rounded-md px-1.5 py-0.5 transition",
+                          hasValue ? "text-emerald-200" : "text-slate-400",
+                          selectedStatIndex === index &&
+                            "bg-white/5 ring-1 ring-cyan-200/40",
+                        )}
+                        onClick={() => setSelectedStatIndex(index)}
+                      >
+                        {hasValue && statLabel ? (
+                          <span>
+                            {statLabel} {param.value}
+                            {statRange ? (
+                              <span className="ml-2 text-[12px] text-slate-400">
+                                ({formatCharacteristicValue(statRange)})
+                              </span>
+                            ) : null}
+                          </span>
+                        ) : (
+                          "unknown"
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1">
+              {[
+                {
+                  icon: goldIcon,
+                  key: "gold",
+                  count: gold,
+                  payload: { type: "gold" as const },
+                },
+                {
+                  icon: equipmentPartIcon,
+                  key: "parts",
+                  count: parts,
+                  payload: { type: "parts" as const },
+                },
+                {
+                  icon: rarityUpdateToUncommonIcon,
+                  key: "rarity-uncommon",
+                  count:
+                    rarityUpgrades[RarityEnum.UNCOMMON as RarityUpgrade] ?? 0,
+                  payload: {
+                    type: "setRarity" as const,
+                    rarity: RarityEnum.UNCOMMON as RarityUpgrade,
+                  },
+                },
+                {
+                  icon: rarityUpdateToRareIcon,
+                  key: "rarity-rare",
+                  count: rarityUpgrades[RarityEnum.RARE as RarityUpgrade] ?? 0,
+                  payload: {
+                    type: "setRarity" as const,
+                    rarity: RarityEnum.RARE as RarityUpgrade,
+                  },
+                },
+                {
+                  icon: rarityUpdateToEpicIcon,
+                  key: "rarity-epic",
+                  count: rarityUpgrades[RarityEnum.EPIC as RarityUpgrade] ?? 0,
+                  payload: {
+                    type: "setRarity" as const,
+                    rarity: RarityEnum.EPIC as RarityUpgrade,
+                  },
+                },
+                {
+                  icon: rarityUpdateToLegendaryIcon,
+                  key: "rarity-legendary",
+                  count:
+                    rarityUpgrades[RarityEnum.LEGENDARY as RarityUpgrade] ?? 0,
+                  payload: {
+                    type: "setRarity" as const,
+                    rarity: RarityEnum.LEGENDARY as RarityUpgrade,
+                  },
+                },
+              ].map(({ icon, key, count, payload }) => (
+                <CraftCurrencySlot
+                  key={key}
+                  icon={icon}
+                  count={count}
+                  payload={payload}
+                />
+              ))}
+            </div>
+
+            <div className="grid grid-cols-1">
+              {CHANGE_VALUE_ICONS.map((icon, index) => (
+                <CraftCurrencySlot
+                  key={`change-value-slot-${index + 1}`}
+                  icon={icon}
+                  count={changeValueChars[index] ?? 0}
+                  payload={{ type: "changeValueChar", level: index + 1 }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {notice ? (
+        <div className="rounded-xl border border-amber-200/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-100">
+          {notice}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+type CraftCurrencySlotProps = {
+  icon: StaticImageData;
+  count: number;
+  payload: CraftCurrencyDragPayload;
+};
+
+function CraftCurrencySlot({ icon, count, payload }: CraftCurrencySlotProps) {
+  const isDraggable = count > 0;
+  const { setNodeRef, attributes, listeners } = useDraggable({
+    id: buildCraftCurrencyId(payload),
+    data: {
+      type: DND_ITEM_TYPE.CRAFT_CURRENCY,
+      payload,
+    },
+    disabled: !isDraggable,
+  });
+
+  return (
     <div
-      key={key}
+      ref={setNodeRef}
       className="aspect-square p-1 w-[88px]"
-      draggable={!!dragPayload && count > 0}
-      onDragStart={(event) => {
-        if (!dragPayload || count <= 0) return;
-        event.dataTransfer.setData(
-          "application/x-craft-currency",
-          JSON.stringify(dragPayload),
-        );
-        event.dataTransfer.effectAllowed = "move";
-      }}
+      {...attributes}
+      {...listeners}
     >
       <div
         className={cn(
           "relative h-full w-full overflow-hidden rounded-xl border border-dashed border-white/10 bg-white/5",
-          !!dragPayload && count > 0 && "cursor-grab active:cursor-grabbing",
-          !!dragPayload && count <= 0 && "cursor-not-allowed",
+          isDraggable && "cursor-grab active:cursor-grabbing",
+          !isDraggable && "cursor-not-allowed",
         )}
       >
         <div className="flex h-full w-full items-center justify-center">
@@ -573,94 +945,6 @@ export function CraftInventory() {
           </div>
         ) : null}
       </div>
-    </div>
-  );
-
-  return (
-    <div className="flex flex-1 flex-col gap-4">
-      <div className={cn("w-fit", inventoryPanelClasses)}>
-        <div className="flex flex-col gap-4">
-          <div className="grid items-start justify-center gap-4 [grid-template-columns:auto_auto_auto]">
-            <div className="grid grid-cols-1">
-              {ADD_ICONS.map((icon, index) =>
-                renderResourceSlot(
-                  icon,
-                  addOrChangeChars[index] ?? 0,
-                  `add-slot-${index + 1}`,
-                  { type: "addChar", level: index + 1 },
-                ),
-              )}
-            </div>
-
-            <div className="flex flex-col items-center gap-4">
-              <div className="w-full rounded-2xl border border-white/10 bg-black/20 px-3 py-2">
-                <div className="mt-2 flex flex-col gap-1 text-sm">
-                  {forgeParams.map((param, index) => {
-                    const statLabel = param.stat
-                      ? CHARACTERISTIC_LABELS[param.stat]
-                      : null;
-                    const hasValue = typeof param.value === "number";
-                    const statRange =
-                      param.stat && item?.rarity
-                        ? item?.statRanges?.[item.rarity]?.[param.stat]
-                        : undefined;
-                    return (
-                      <div
-                        key={index}
-                        className={cn(
-                          "font-mono text-[16px]",
-                          hasValue ? "text-emerald-200" : "text-slate-400",
-                        )}
-                      >
-                        {hasValue && statLabel ? (
-                          <span>
-                            {statLabel} {param.value}
-                            {statRange ? (
-                              <span className="ml-2 text-[12px] text-slate-400">
-                                ({formatCharacteristicValue(statRange)})
-                              </span>
-                            ) : null}
-                          </span>
-                        ) : (
-                          "unknown"
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1">
-                {renderItemSlot(CRAFT_ITEM_SLOT_INDEX)}
-              </div>
-
-              <div className="flex items-center justify-center gap-2">
-                {renderResourceSlot(goldIcon, gold, "gold-slot", { type: "gold" })}
-                {renderResourceSlot(equipmentPartIcon, parts, "parts-slot", {
-                  type: "parts",
-                })}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1">
-              {CHANGE_VALUE_ICONS.map((icon, index) =>
-                renderResourceSlot(
-                  icon,
-                  changeValueChars[index] ?? 0,
-                  `change-value-slot-${index + 1}`,
-                  { type: "changeValueChar", level: index + 1 },
-                ),
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {notice ? (
-        <div className="rounded-xl border border-amber-200/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-100">
-          {notice}
-        </div>
-      ) : null}
     </div>
   );
 }

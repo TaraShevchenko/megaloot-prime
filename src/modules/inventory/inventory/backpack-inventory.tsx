@@ -1,7 +1,6 @@
 "use client";
 
 import { useInventoryStore } from "../shared/inventory.hooks";
-import { INVENTORY_STORE_REGISTRY } from "../shared/inventory.registry";
 import { InventoryUi } from "../shared/ui/inventory-ui";
 import { inventoryPanelClasses } from "../shared/inventory-panel-classes";
 
@@ -11,10 +10,7 @@ export function BackpackInventory() {
   return (
     <div className="flex flex-1 flex-col gap-4">
       <div className={inventoryPanelClasses}>
-        <InventoryUi
-          store={useInventoryStore}
-          storeRegistry={INVENTORY_STORE_REGISTRY}
-        />
+        <InventoryUi store={useInventoryStore} />
       </div>
 
       {notice ? (

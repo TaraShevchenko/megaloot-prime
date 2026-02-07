@@ -11,6 +11,16 @@ import changeValueChar3Icon from "modules/equipment/assets/forge/change-value-ch
 import changeValueChar4Icon from "modules/equipment/assets/forge/change-value-char-4.png";
 import changeValueChar5Icon from "modules/equipment/assets/forge/change-value-char-5.png";
 import changeValueChar6Icon from "modules/equipment/assets/forge/change-value-char-6.png";
+import cloneItemIcon from "modules/equipment/assets/forge/clone-item.png";
+import improve3RandomIcon from "modules/equipment/assets/forge/improve-3-random.png";
+import improveRandomIcon from "modules/equipment/assets/forge/improve-random.png";
+import improveSelectedIcon from "modules/equipment/assets/forge/improve-selected.png";
+import rarityUpdateToEpicIcon from "modules/equipment/assets/forge/rarity-update-to-epic.png";
+import rarityUpdateToLegendaryIcon from "modules/equipment/assets/forge/rarity-update-to-legendary.png";
+import rarityUpdateToRareIcon from "modules/equipment/assets/forge/rarity-update-to-rare.png";
+import rarityUpdateToUncommonIcon from "modules/equipment/assets/forge/rarity-update-to-uncommon.png";
+import removeRandomIcon from "modules/equipment/assets/forge/remove-random.png";
+import removeSelectedIcon from "modules/equipment/assets/forge/remove-selected.png";
 import goldIcon from "modules/equipment/assets/gold.png";
 
 const ADD_ICONS = [
@@ -36,4 +46,14 @@ export {
   goldIcon,
   ADD_ICONS,
   CHANGE_VALUE_ICONS,
+  removeRandomIcon,
+  removeSelectedIcon,
+  improveRandomIcon,
+  improveSelectedIcon,
+  improve3RandomIcon,
+  cloneItemIcon,
+  rarityUpdateToUncommonIcon,
+  rarityUpdateToRareIcon,
+  rarityUpdateToEpicIcon,
+  rarityUpdateToLegendaryIcon,
 };
