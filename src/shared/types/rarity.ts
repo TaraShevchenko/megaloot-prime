@@ -13,11 +13,11 @@ export type RarityEnum = z.infer<typeof RarityEnumSchema>;
 export const RarityEnum = RarityEnumSchema.enum;
 
 export const RARITY_BACKGROUNDS: Record<RarityEnum, string> = {
-  [RarityEnum.COMMON]: "linear-gradient(134deg,#D9D9D9,#737373)",
-  [RarityEnum.UNCOMMON]: "linear-gradient(134deg,#32E26C,#A4F8C0)",
-  [RarityEnum.RARE]: "linear-gradient(134deg,#5C6FE8,#BBADE6)",
-  [RarityEnum.EPIC]: "linear-gradient(134deg,#FFD900,#9650F8)",
-  [RarityEnum.LEGENDARY]: "linear-gradient(134deg,#3BE8C5,#003C30)",
+  [RarityEnum.COMMON]: "linear-gradient(134deg,#d9d9d9,#737373)",
+  [RarityEnum.UNCOMMON]: "linear-gradient(134deg,#32e26c,#a4f8c0)",
+  [RarityEnum.RARE]: "linear-gradient(134deg,#5c6fe8,#bbade6)",
+  [RarityEnum.EPIC]: "linear-gradient(134deg,#f4c430,#d15a17)",
+  [RarityEnum.LEGENDARY]: "linear-gradient(134deg,#37c7c1,#0b4a4b)",
 };
 
 export const RARITY_LABELS: Record<RarityEnum, string> = {
